@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  animeinfo:
+    container_name: animeinfo
+    build: ./app
+    image: animeinfo:latest
+    ports:
+      - "5099:5099"
