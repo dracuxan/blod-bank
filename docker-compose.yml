@@ -1,8 +1,0 @@
-version: '3.8'
-services:
-  catFacts:
-    container_name: catFacts
-    build: ./app
-    image: animeinfo:latest
-    ports:
-      - "5099:5099"
