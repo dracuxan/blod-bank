@@ -1,0 +1,34 @@
+syntax = "proto3";
+package blodBank;
+
+option go_package = "./blodBank";
+
+service BlodBankService {
+  rpc GetBlod(NoParam) returns (stream Samples);
+
+  rpc DonateBlod(Type) returns (Cert);
+
+  rpc DonationStatus(Cert) returns (Status);
+}
+
+message NoParam {};
+
+message Samples {
+  string id = 1;
+  string type = 2;
+}
+
+message Type {
+  string id = 1;
+  string type = 2;
+}
+
+message Cert {
+  string id = 1;
+  string name = 2;
+}
+
+message Status {
+  string certId = 1;
+  string status = 2;
+}
