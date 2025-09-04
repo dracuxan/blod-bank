@@ -4,7 +4,7 @@ package blodBank;
 option go_package = "./blodBank";
 
 service BlodBankService {
-  rpc GetBlod(NoParam) returns (stream Samples);
+  rpc GetBlod(NoParam) returns (Samples);
 
   rpc DonateBlod(Type) returns (Cert);
 

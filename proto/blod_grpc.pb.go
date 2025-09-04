@@ -28,7 +28,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BlodBankServiceClient interface {
-	GetBlod(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Samples], error)
+	GetBlod(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Samples, error)
 	DonateBlod(ctx context.Context, in *Type, opts ...grpc.CallOption) (*Cert, error)
 	DonationStatus(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Status, error)
 }
@@ -41,24 +41,15 @@ func NewBlodBankServiceClient(cc grpc.ClientConnInterface) BlodBankServiceClient
 	return &blodBankServiceClient{cc}
 }
 
-func (c *blodBankServiceClient) GetBlod(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Samples], error) {
+func (c *blodBankServiceClient) GetBlod(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Samples, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &BlodBankService_ServiceDesc.Streams[0], BlodBankService_GetBlod_FullMethodName, cOpts...)
+	out := new(Samples)
+	err := c.cc.Invoke(ctx, BlodBankService_GetBlod_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[NoParam, Samples]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type BlodBankService_GetBlodClient = grpc.ServerStreamingClient[Samples]
 
 func (c *blodBankServiceClient) DonateBlod(ctx context.Context, in *Type, opts ...grpc.CallOption) (*Cert, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -84,7 +75,7 @@ func (c *blodBankServiceClient) DonationStatus(ctx context.Context, in *Cert, op
 // All implementations must embed UnimplementedBlodBankServiceServer
 // for forward compatibility.
 type BlodBankServiceServer interface {
-	GetBlod(*NoParam, grpc.ServerStreamingServer[Samples]) error
+	GetBlod(context.Context, *NoParam) (*Samples, error)
 	DonateBlod(context.Context, *Type) (*Cert, error)
 	DonationStatus(context.Context, *Cert) (*Status, error)
 	mustEmbedUnimplementedBlodBankServiceServer()
@@ -97,8 +88,8 @@ type BlodBankServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedBlodBankServiceServer struct{}
 
-func (UnimplementedBlodBankServiceServer) GetBlod(*NoParam, grpc.ServerStreamingServer[Samples]) error {
-	return status.Errorf(codes.Unimplemented, "method GetBlod not implemented")
+func (UnimplementedBlodBankServiceServer) GetBlod(context.Context, *NoParam) (*Samples, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlod not implemented")
 }
 func (UnimplementedBlodBankServiceServer) DonateBlod(context.Context, *Type) (*Cert, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DonateBlod not implemented")
@@ -127,16 +118,23 @@ func RegisterBlodBankServiceServer(s grpc.ServiceRegistrar, srv BlodBankServiceS
 	s.RegisterService(&BlodBankService_ServiceDesc, srv)
 }
 
-func _BlodBankService_GetBlod_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(NoParam)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _BlodBankService_GetBlod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NoParam)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(BlodBankServiceServer).GetBlod(m, &grpc.GenericServerStream[NoParam, Samples]{ServerStream: stream})
+	if interceptor == nil {
+		return srv.(BlodBankServiceServer).GetBlod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BlodBankService_GetBlod_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlodBankServiceServer).GetBlod(ctx, req.(*NoParam))
+	}
+	return interceptor(ctx, in, info, handler)
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type BlodBankService_GetBlodServer = grpc.ServerStreamingServer[Samples]
 
 func _BlodBankService_DonateBlod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Type)
@@ -182,6 +180,10 @@ var BlodBankService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BlodBankServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetBlod",
+			Handler:    _BlodBankService_GetBlod_Handler,
+		},
+		{
 			MethodName: "DonateBlod",
 			Handler:    _BlodBankService_DonateBlod_Handler,
 		},
@@ -190,12 +192,6 @@ var BlodBankService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BlodBankService_DonationStatus_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "GetBlod",
-			Handler:       _BlodBankService_GetBlod_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/blod.proto",
 }

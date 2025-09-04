@@ -1,4 +1,4 @@
-module github.com/dracuxan/blod-bank.git
+module github.com/dracuxan/blod-bank
 
 go 1.24.1
 
