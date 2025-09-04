@@ -1,4 +1,4 @@
-module github.com/dracuxan/gRPC-Server.git
+module github.com/dracuxan/blod-bank.git
 
 go 1.24.1
 
