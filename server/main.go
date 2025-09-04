@@ -25,6 +25,14 @@ func (s *server) GetBlod(_ context.Context, in *blodBank.NoParam) (*blodBank.Sam
 	}, nil
 }
 
+func (s *server) DonateBlod(_ context.Context, in *blodBank.Type) (*blodBank.Cert, error) {
+	log.Printf("Sending certificate to %s for donating blod of type %s", in.Name, in.Type)
+	return &blodBank.Cert{
+		Type: in.Type,
+		Name: in.Name,
+	}, nil
+}
+
 func main() {
 	flag.Parse()
 	ls, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))

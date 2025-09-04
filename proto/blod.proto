@@ -21,11 +21,13 @@ message Samples {
 message Type {
   string id = 1;
   string type = 2;
+  string name = 3;
 }
 
 message Cert {
   string id = 1;
   string name = 2;
+  string type = 3;
 }
 
 message Status {
