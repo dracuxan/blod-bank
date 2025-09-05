@@ -12,26 +12,32 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var statusAddr = flag.String("statusAddr", "localhost:5000", "server address to connect")
+// statusAddr       = flag.String("statusAddr", "localhost:5000", "server address to check server status")
+var donorServiceAddr = flag.String("donorServiceAddr", "localhost:5001", "server address for Donor Service")
 
 func main() {
 	flag.Parse()
 
-	conn, err := grpc.NewClient(*statusAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(*donorServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 
 	defer conn.Close()
 
-	c := blodBank.NewSystemServiceClient(conn)
+	c := blodBank.NewDonorServiceClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	r, err := c.Ping(ctx, &blodBank.NoParam{})
-	if err != nil {
-		log.Fatal("The server is DOWN")
+	newDonor := blodBank.NewDonor{
+		Name:     "Nisarg",
+		BlodType: "B+",
 	}
-	fmt.Println(r.GetMessage())
+
+	r, err := c.RegisterDonor(ctx, &newDonor)
+	if err != nil {
+		log.Fatalf("Cannot register donor: %v", err)
+	}
+	fmt.Printf("Registered donor with id: %s\n", r.GetId())
 }
