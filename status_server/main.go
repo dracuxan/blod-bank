@@ -17,9 +17,9 @@ type server struct {
 	blodBank.UnimplementedSystemServiceServer
 }
 
-func (s *server) Ping(_ context.Context, in *blodBank.NoParam) (*blodBank.Status, error) {
+func (s *server) Ping(_ context.Context, in *blodBank.NoParam) (*blodBank.SystemStatus, error) {
 	log.Println("The server is UP")
-	return &blodBank.Status{
+	return &blodBank.SystemStatus{
 		Message: "The server is UP",
 	}, nil
 }
