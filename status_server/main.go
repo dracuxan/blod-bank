@@ -14,22 +14,13 @@ import (
 var port = flag.Int("port", 5000, "Server port")
 
 type server struct {
-	blodBank.UnimplementedBlodBankServiceServer
+	blodBank.UnimplementedSystemServiceServer
 }
 
-func (s *server) GetBlod(_ context.Context, in *blodBank.NoParam) (*blodBank.Samples, error) {
-	log.Printf("Sending Blod Samples.")
-	return &blodBank.Samples{
-		Id:   "1",
-		Type: "B+",
-	}, nil
-}
-
-func (s *server) DonateBlod(_ context.Context, in *blodBank.Type) (*blodBank.Cert, error) {
-	log.Printf("Sending certificate to %s for donating blod of type %s", in.Name, in.Type)
-	return &blodBank.Cert{
-		Type: in.Type,
-		Name: in.Name,
+func (s *server) Ping(_ context.Context, in *blodBank.NoParam) (*blodBank.Status, error) {
+	log.Println("The server is UP")
+	return &blodBank.Status{
+		Message: "The server is UP",
 	}, nil
 }
 
@@ -41,7 +32,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	blodBank.RegisterBlodBankServiceServer(s, &server{})
+	blodBank.RegisterSystemServiceServer(s, &server{})
 	log.Printf("server listening on port %v", ls.Addr())
 	if err := s.Serve(ls); err != nil {
 		log.Fatalf("Failed to server: %v", err)

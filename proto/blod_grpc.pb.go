@@ -19,177 +19,101 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BlodBankService_GetBlod_FullMethodName        = "/blodBank.BlodBankService/GetBlod"
-	BlodBankService_DonateBlod_FullMethodName     = "/blodBank.BlodBankService/DonateBlod"
-	BlodBankService_DonationStatus_FullMethodName = "/blodBank.BlodBankService/DonationStatus"
+	SystemService_Ping_FullMethodName = "/blodBank.SystemService/Ping"
 )
 
-// BlodBankServiceClient is the client API for BlodBankService service.
+// SystemServiceClient is the client API for SystemService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BlodBankServiceClient interface {
-	GetBlod(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Samples, error)
-	DonateBlod(ctx context.Context, in *Type, opts ...grpc.CallOption) (*Cert, error)
-	DonationStatus(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Status, error)
+type SystemServiceClient interface {
+	Ping(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Status, error)
 }
 
-type blodBankServiceClient struct {
+type systemServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewBlodBankServiceClient(cc grpc.ClientConnInterface) BlodBankServiceClient {
-	return &blodBankServiceClient{cc}
+func NewSystemServiceClient(cc grpc.ClientConnInterface) SystemServiceClient {
+	return &systemServiceClient{cc}
 }
 
-func (c *blodBankServiceClient) GetBlod(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Samples, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Samples)
-	err := c.cc.Invoke(ctx, BlodBankService_GetBlod_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *blodBankServiceClient) DonateBlod(ctx context.Context, in *Type, opts ...grpc.CallOption) (*Cert, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Cert)
-	err := c.cc.Invoke(ctx, BlodBankService_DonateBlod_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *blodBankServiceClient) DonationStatus(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Status, error) {
+func (c *systemServiceClient) Ping(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Status, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Status)
-	err := c.cc.Invoke(ctx, BlodBankService_DonationStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemService_Ping_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// BlodBankServiceServer is the server API for BlodBankService service.
-// All implementations must embed UnimplementedBlodBankServiceServer
+// SystemServiceServer is the server API for SystemService service.
+// All implementations must embed UnimplementedSystemServiceServer
 // for forward compatibility.
-type BlodBankServiceServer interface {
-	GetBlod(context.Context, *NoParam) (*Samples, error)
-	DonateBlod(context.Context, *Type) (*Cert, error)
-	DonationStatus(context.Context, *Cert) (*Status, error)
-	mustEmbedUnimplementedBlodBankServiceServer()
+type SystemServiceServer interface {
+	Ping(context.Context, *NoParam) (*Status, error)
+	mustEmbedUnimplementedSystemServiceServer()
 }
 
-// UnimplementedBlodBankServiceServer must be embedded to have
+// UnimplementedSystemServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedBlodBankServiceServer struct{}
+type UnimplementedSystemServiceServer struct{}
 
-func (UnimplementedBlodBankServiceServer) GetBlod(context.Context, *NoParam) (*Samples, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlod not implemented")
+func (UnimplementedSystemServiceServer) Ping(context.Context, *NoParam) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedBlodBankServiceServer) DonateBlod(context.Context, *Type) (*Cert, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DonateBlod not implemented")
-}
-func (UnimplementedBlodBankServiceServer) DonationStatus(context.Context, *Cert) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DonationStatus not implemented")
-}
-func (UnimplementedBlodBankServiceServer) mustEmbedUnimplementedBlodBankServiceServer() {}
-func (UnimplementedBlodBankServiceServer) testEmbeddedByValue()                         {}
+func (UnimplementedSystemServiceServer) mustEmbedUnimplementedSystemServiceServer() {}
+func (UnimplementedSystemServiceServer) testEmbeddedByValue()                       {}
 
-// UnsafeBlodBankServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BlodBankServiceServer will
+// UnsafeSystemServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SystemServiceServer will
 // result in compilation errors.
-type UnsafeBlodBankServiceServer interface {
-	mustEmbedUnimplementedBlodBankServiceServer()
+type UnsafeSystemServiceServer interface {
+	mustEmbedUnimplementedSystemServiceServer()
 }
 
-func RegisterBlodBankServiceServer(s grpc.ServiceRegistrar, srv BlodBankServiceServer) {
-	// If the following call pancis, it indicates UnimplementedBlodBankServiceServer was
+func RegisterSystemServiceServer(s grpc.ServiceRegistrar, srv SystemServiceServer) {
+	// If the following call pancis, it indicates UnimplementedSystemServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&BlodBankService_ServiceDesc, srv)
+	s.RegisterService(&SystemService_ServiceDesc, srv)
 }
 
-func _BlodBankService_GetBlod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NoParam)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlodBankServiceServer).GetBlod(ctx, in)
+		return srv.(SystemServiceServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BlodBankService_GetBlod_FullMethodName,
+		FullMethod: SystemService_Ping_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlodBankServiceServer).GetBlod(ctx, req.(*NoParam))
+		return srv.(SystemServiceServer).Ping(ctx, req.(*NoParam))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BlodBankService_DonateBlod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Type)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BlodBankServiceServer).DonateBlod(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BlodBankService_DonateBlod_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlodBankServiceServer).DonateBlod(ctx, req.(*Type))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BlodBankService_DonationStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Cert)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BlodBankServiceServer).DonationStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BlodBankService_DonationStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlodBankServiceServer).DonationStatus(ctx, req.(*Cert))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// BlodBankService_ServiceDesc is the grpc.ServiceDesc for BlodBankService service.
+// SystemService_ServiceDesc is the grpc.ServiceDesc for SystemService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var BlodBankService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "blodBank.BlodBankService",
-	HandlerType: (*BlodBankServiceServer)(nil),
+var SystemService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "blodBank.SystemService",
+	HandlerType: (*SystemServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetBlod",
-			Handler:    _BlodBankService_GetBlod_Handler,
-		},
-		{
-			MethodName: "DonateBlod",
-			Handler:    _BlodBankService_DonateBlod_Handler,
-		},
-		{
-			MethodName: "DonationStatus",
-			Handler:    _BlodBankService_DonationStatus_Handler,
+			MethodName: "Ping",
+			Handler:    _SystemService_Ping_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

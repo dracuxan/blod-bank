@@ -3,15 +3,19 @@ package blodBank;
 
 option go_package = "./blodBank";
 
-service BlodBankService {
-  rpc GetBlod(NoParam) returns (Samples);
+service SystemService { rpc Ping(NoParam) returns (Status); }
 
-  rpc DonateBlod(Type) returns (Cert);
-
-  rpc DonationStatus(Cert) returns (Status);
-}
+// service DonorService {
+//   rpc RegisterDonor(donorInfo) returns (DonorId);
+//
+//   rpc UpdateDonor(donorInfo) returns (Status);
+//
+//   rpc GetDonor(donorID) returns (donorInfo);
+// }
 
 message NoParam {};
+
+message Status { string message = 1; };
 
 message Samples {
   string id = 1;
@@ -30,7 +34,7 @@ message Cert {
   string type = 3;
 }
 
-message Status {
-  string certId = 1;
-  string status = 2;
-}
+// message Status {
+//   string certId = 1;
+//   string status = 2;
+// }
