@@ -58,7 +58,8 @@ func (*NoParam) Descriptor() ([]byte, []int) {
 	return file_proto_blod_proto_rawDescGZIP(), []int{0}
 }
 
-type Status struct {
+// System Service
+type SystemStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -66,8 +67,8 @@ type Status struct {
 	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 }
 
-func (x *Status) Reset() {
-	*x = Status{}
+func (x *SystemStatus) Reset() {
+	*x = SystemStatus{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_blod_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -75,13 +76,13 @@ func (x *Status) Reset() {
 	}
 }
 
-func (x *Status) String() string {
+func (x *SystemStatus) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Status) ProtoMessage() {}
+func (*SystemStatus) ProtoMessage() {}
 
-func (x *Status) ProtoReflect() protoreflect.Message {
+func (x *SystemStatus) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_blod_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -93,29 +94,29 @@ func (x *Status) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Status.ProtoReflect.Descriptor instead.
-func (*Status) Descriptor() ([]byte, []int) {
+// Deprecated: Use SystemStatus.ProtoReflect.Descriptor instead.
+func (*SystemStatus) Descriptor() ([]byte, []int) {
 	return file_proto_blod_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Status) GetMessage() string {
+func (x *SystemStatus) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
 	return ""
 }
 
-type Samples struct {
+type NewDonor struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Name     string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	BlodType string `protobuf:"bytes,2,opt,name=blod_type,json=blodType,proto3" json:"blod_type,omitempty"`
 }
 
-func (x *Samples) Reset() {
-	*x = Samples{}
+func (x *NewDonor) Reset() {
+	*x = NewDonor{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_blod_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -123,13 +124,13 @@ func (x *Samples) Reset() {
 	}
 }
 
-func (x *Samples) String() string {
+func (x *NewDonor) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Samples) ProtoMessage() {}
+func (*NewDonor) ProtoMessage() {}
 
-func (x *Samples) ProtoReflect() protoreflect.Message {
+func (x *NewDonor) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_blod_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -141,37 +142,35 @@ func (x *Samples) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Samples.ProtoReflect.Descriptor instead.
-func (*Samples) Descriptor() ([]byte, []int) {
+// Deprecated: Use NewDonor.ProtoReflect.Descriptor instead.
+func (*NewDonor) Descriptor() ([]byte, []int) {
 	return file_proto_blod_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Samples) GetId() string {
+func (x *NewDonor) GetName() string {
 	if x != nil {
-		return x.Id
+		return x.Name
 	}
 	return ""
 }
 
-func (x *Samples) GetType() string {
+func (x *NewDonor) GetBlodType() string {
 	if x != nil {
-		return x.Type
+		return x.BlodType
 	}
 	return ""
 }
 
-type Type struct {
+type DonorID struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (x *Type) Reset() {
-	*x = Type{}
+func (x *DonorID) Reset() {
+	*x = DonorID{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_blod_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -179,13 +178,13 @@ func (x *Type) Reset() {
 	}
 }
 
-func (x *Type) String() string {
+func (x *DonorID) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Type) ProtoMessage() {}
+func (*DonorID) ProtoMessage() {}
 
-func (x *Type) ProtoReflect() protoreflect.Message {
+func (x *DonorID) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_blod_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -197,44 +196,30 @@ func (x *Type) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Type.ProtoReflect.Descriptor instead.
-func (*Type) Descriptor() ([]byte, []int) {
+// Deprecated: Use DonorID.ProtoReflect.Descriptor instead.
+func (*DonorID) Descriptor() ([]byte, []int) {
 	return file_proto_blod_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Type) GetId() string {
+func (x *DonorID) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *Type) GetType() string {
-	if x != nil {
-		return x.Type
-	}
-	return ""
-}
-
-func (x *Type) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type Cert struct {
+type DonorInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Type string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	BlodType string `protobuf:"bytes,3,opt,name=blod_type,json=blodType,proto3" json:"blod_type,omitempty"`
 }
 
-func (x *Cert) Reset() {
-	*x = Cert{}
+func (x *DonorInfo) Reset() {
+	*x = DonorInfo{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_blod_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -242,13 +227,13 @@ func (x *Cert) Reset() {
 	}
 }
 
-func (x *Cert) String() string {
+func (x *DonorInfo) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Cert) ProtoMessage() {}
+func (*DonorInfo) ProtoMessage() {}
 
-func (x *Cert) ProtoReflect() protoreflect.Message {
+func (x *DonorInfo) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_blod_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -260,30 +245,77 @@ func (x *Cert) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Cert.ProtoReflect.Descriptor instead.
-func (*Cert) Descriptor() ([]byte, []int) {
+// Deprecated: Use DonorInfo.ProtoReflect.Descriptor instead.
+func (*DonorInfo) Descriptor() ([]byte, []int) {
 	return file_proto_blod_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *Cert) GetId() string {
+func (x *DonorInfo) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *Cert) GetName() string {
+func (x *DonorInfo) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *Cert) GetType() string {
+func (x *DonorInfo) GetBlodType() string {
 	if x != nil {
-		return x.Type
+		return x.BlodType
 	}
 	return ""
+}
+
+type DonorList struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Donors []*DonorInfo `protobuf:"bytes,1,rep,name=donors,proto3" json:"donors,omitempty"`
+}
+
+func (x *DonorList) Reset() {
+	*x = DonorList{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_blod_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DonorList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DonorList) ProtoMessage() {}
+
+func (x *DonorList) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_blod_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DonorList.ProtoReflect.Descriptor instead.
+func (*DonorList) Descriptor() ([]byte, []int) {
+	return file_proto_blod_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *DonorList) GetDonors() []*DonorInfo {
+	if x != nil {
+		return x.Donors
+	}
+	return nil
 }
 
 var File_proto_blod_proto protoreflect.FileDescriptor
@@ -291,25 +323,40 @@ var File_proto_blod_proto protoreflect.FileDescriptor
 var file_proto_blod_proto_rawDesc = []byte{
 	0x0a, 0x10, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x62, 0x6c, 0x6f, 0x64, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x12, 0x08, 0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x22, 0x09, 0x0a, 0x07,
-	0x4e, 0x6f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x22, 0x22, 0x0a, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x2d, 0x0a, 0x07, 0x53,
-	0x61, 0x6d, 0x70, 0x6c, 0x65, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x22, 0x3e, 0x0a, 0x04, 0x54, 0x79,
-	0x70, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
-	0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x3e, 0x0a, 0x04, 0x43, 0x65,
-	0x72, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
-	0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x32, 0x3c, 0x0a, 0x0d, 0x53, 0x79,
-	0x73, 0x74, 0x65, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2b, 0x0a, 0x04, 0x50,
-	0x69, 0x6e, 0x67, 0x12, 0x11, 0x2e, 0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e, 0x4e,
-	0x6f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x1a, 0x10, 0x2e, 0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e,
-	0x6b, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x42, 0x0c, 0x5a, 0x0a, 0x2e, 0x2f, 0x62, 0x6c,
-	0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x4e, 0x6f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x22, 0x28, 0x0a, 0x0c, 0x53, 0x79, 0x73, 0x74, 0x65,
+	0x6d, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61,
+	0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x22, 0x3b, 0x0a, 0x08, 0x4e, 0x65, 0x77, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x12, 0x12, 0x0a,
+	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
+	0x65, 0x12, 0x1b, 0x0a, 0x09, 0x62, 0x6c, 0x6f, 0x64, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x62, 0x6c, 0x6f, 0x64, 0x54, 0x79, 0x70, 0x65, 0x22, 0x19,
+	0x0a, 0x07, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x49, 0x44, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x4c, 0x0a, 0x09, 0x44, 0x6f, 0x6e,
+	0x6f, 0x72, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x62, 0x6c,
+	0x6f, 0x64, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x62,
+	0x6c, 0x6f, 0x64, 0x54, 0x79, 0x70, 0x65, 0x22, 0x38, 0x0a, 0x09, 0x44, 0x6f, 0x6e, 0x6f, 0x72,
+	0x4c, 0x69, 0x73, 0x74, 0x12, 0x2b, 0x0a, 0x06, 0x64, 0x6f, 0x6e, 0x6f, 0x72, 0x73, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e,
+	0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x06, 0x64, 0x6f, 0x6e, 0x6f, 0x72,
+	0x73, 0x32, 0x42, 0x0a, 0x0d, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x12, 0x31, 0x0a, 0x04, 0x50, 0x69, 0x6e, 0x67, 0x12, 0x11, 0x2e, 0x62, 0x6c, 0x6f,
+	0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e, 0x4e, 0x6f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x1a, 0x16, 0x2e,
+	0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x53,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x32, 0xb2, 0x01, 0x0a, 0x0c, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x53,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x36, 0x0a, 0x0d, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74,
+	0x65, 0x72, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x12, 0x12, 0x2e, 0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61,
+	0x6e, 0x6b, 0x2e, 0x4e, 0x65, 0x77, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x1a, 0x11, 0x2e, 0x62, 0x6c,
+	0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x49, 0x44, 0x12, 0x32,
+	0x0a, 0x08, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x12, 0x11, 0x2e, 0x62, 0x6c, 0x6f,
+	0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x49, 0x44, 0x1a, 0x13, 0x2e,
+	0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x49, 0x6e,
+	0x66, 0x6f, 0x12, 0x36, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x44, 0x6f, 0x6e, 0x6f,
+	0x72, 0x73, 0x12, 0x11, 0x2e, 0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x2e, 0x4e, 0x6f,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x1a, 0x13, 0x2e, 0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b,
+	0x2e, 0x44, 0x6f, 0x6e, 0x6f, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x0c, 0x5a, 0x0a, 0x2e, 0x2f,
+	0x62, 0x6c, 0x6f, 0x64, 0x42, 0x61, 0x6e, 0x6b, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -324,22 +371,30 @@ func file_proto_blod_proto_rawDescGZIP() []byte {
 	return file_proto_blod_proto_rawDescData
 }
 
-var file_proto_blod_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_blod_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_blod_proto_goTypes = []interface{}{
-	(*NoParam)(nil), // 0: blodBank.NoParam
-	(*Status)(nil),  // 1: blodBank.Status
-	(*Samples)(nil), // 2: blodBank.Samples
-	(*Type)(nil),    // 3: blodBank.Type
-	(*Cert)(nil),    // 4: blodBank.Cert
+	(*NoParam)(nil),      // 0: blodBank.NoParam
+	(*SystemStatus)(nil), // 1: blodBank.SystemStatus
+	(*NewDonor)(nil),     // 2: blodBank.NewDonor
+	(*DonorID)(nil),      // 3: blodBank.DonorID
+	(*DonorInfo)(nil),    // 4: blodBank.DonorInfo
+	(*DonorList)(nil),    // 5: blodBank.DonorList
 }
 var file_proto_blod_proto_depIdxs = []int32{
-	0, // 0: blodBank.SystemService.Ping:input_type -> blodBank.NoParam
-	1, // 1: blodBank.SystemService.Ping:output_type -> blodBank.Status
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	4, // 0: blodBank.DonorList.donors:type_name -> blodBank.DonorInfo
+	0, // 1: blodBank.SystemService.Ping:input_type -> blodBank.NoParam
+	2, // 2: blodBank.DonorService.RegisterDonor:input_type -> blodBank.NewDonor
+	3, // 3: blodBank.DonorService.GetDonor:input_type -> blodBank.DonorID
+	0, // 4: blodBank.DonorService.GetAllDonors:input_type -> blodBank.NoParam
+	1, // 5: blodBank.SystemService.Ping:output_type -> blodBank.SystemStatus
+	3, // 6: blodBank.DonorService.RegisterDonor:output_type -> blodBank.DonorID
+	4, // 7: blodBank.DonorService.GetDonor:output_type -> blodBank.DonorInfo
+	5, // 8: blodBank.DonorService.GetAllDonors:output_type -> blodBank.DonorList
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_blod_proto_init() }
@@ -361,7 +416,7 @@ func file_proto_blod_proto_init() {
 			}
 		}
 		file_proto_blod_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Status); i {
+			switch v := v.(*SystemStatus); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -373,7 +428,7 @@ func file_proto_blod_proto_init() {
 			}
 		}
 		file_proto_blod_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Samples); i {
+			switch v := v.(*NewDonor); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -385,7 +440,7 @@ func file_proto_blod_proto_init() {
 			}
 		}
 		file_proto_blod_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Type); i {
+			switch v := v.(*DonorID); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -397,7 +452,19 @@ func file_proto_blod_proto_init() {
 			}
 		}
 		file_proto_blod_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Cert); i {
+			switch v := v.(*DonorInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_blod_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DonorList); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -415,9 +482,9 @@ func file_proto_blod_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_blod_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_proto_blod_proto_goTypes,
 		DependencyIndexes: file_proto_blod_proto_depIdxs,

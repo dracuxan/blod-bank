@@ -3,38 +3,31 @@ package blodBank;
 
 option go_package = "./blodBank";
 
-service SystemService { rpc Ping(NoParam) returns (Status); }
-
-// service DonorService {
-//   rpc RegisterDonor(donorInfo) returns (DonorId);
-//
-//   rpc UpdateDonor(donorInfo) returns (Status);
-//
-//   rpc GetDonor(donorID) returns (donorInfo);
-// }
+service SystemService { rpc Ping(NoParam) returns (SystemStatus); }
 
 message NoParam {};
 
-message Status { string message = 1; };
+// System Service
+message SystemStatus { string message = 1; };
 
-message Samples {
-  string id = 1;
-  string type = 2;
+// Donor Service
+service DonorService {
+  rpc RegisterDonor(NewDonor) returns (DonorID);
+  rpc GetDonor(DonorID) returns (DonorInfo);
+  rpc GetAllDonors(NoParam) returns (DonorList);
 }
 
-message Type {
-  string id = 1;
-  string type = 2;
-  string name = 3;
+message NewDonor {
+  string name = 1;
+  string blod_type = 2;
 }
 
-message Cert {
+message DonorID { string id = 1; }
+
+message DonorInfo {
   string id = 1;
   string name = 2;
-  string type = 3;
-}
+  string blod_type = 3;
+};
 
-// message Status {
-//   string certId = 1;
-//   string status = 2;
-// }
+message DonorList { repeated DonorInfo donors = 1; }

@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SystemServiceClient interface {
-	Ping(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Status, error)
+	Ping(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*SystemStatus, error)
 }
 
 type systemServiceClient struct {
@@ -37,9 +37,9 @@ func NewSystemServiceClient(cc grpc.ClientConnInterface) SystemServiceClient {
 	return &systemServiceClient{cc}
 }
 
-func (c *systemServiceClient) Ping(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*Status, error) {
+func (c *systemServiceClient) Ping(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*SystemStatus, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Status)
+	out := new(SystemStatus)
 	err := c.cc.Invoke(ctx, SystemService_Ping_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *systemServiceClient) Ping(ctx context.Context, in *NoParam, opts ...grp
 // All implementations must embed UnimplementedSystemServiceServer
 // for forward compatibility.
 type SystemServiceServer interface {
-	Ping(context.Context, *NoParam) (*Status, error)
+	Ping(context.Context, *NoParam) (*SystemStatus, error)
 	mustEmbedUnimplementedSystemServiceServer()
 }
 
@@ -62,7 +62,7 @@ type SystemServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedSystemServiceServer struct{}
 
-func (UnimplementedSystemServiceServer) Ping(context.Context, *NoParam) (*Status, error) {
+func (UnimplementedSystemServiceServer) Ping(context.Context, *NoParam) (*SystemStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 func (UnimplementedSystemServiceServer) mustEmbedUnimplementedSystemServiceServer() {}
@@ -114,6 +114,188 @@ var SystemService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _SystemService_Ping_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/blod.proto",
+}
+
+const (
+	DonorService_RegisterDonor_FullMethodName = "/blodBank.DonorService/RegisterDonor"
+	DonorService_GetDonor_FullMethodName      = "/blodBank.DonorService/GetDonor"
+	DonorService_GetAllDonors_FullMethodName  = "/blodBank.DonorService/GetAllDonors"
+)
+
+// DonorServiceClient is the client API for DonorService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Donor Service
+type DonorServiceClient interface {
+	RegisterDonor(ctx context.Context, in *NewDonor, opts ...grpc.CallOption) (*DonorID, error)
+	GetDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DonorInfo, error)
+	GetAllDonors(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*DonorList, error)
+}
+
+type donorServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewDonorServiceClient(cc grpc.ClientConnInterface) DonorServiceClient {
+	return &donorServiceClient{cc}
+}
+
+func (c *donorServiceClient) RegisterDonor(ctx context.Context, in *NewDonor, opts ...grpc.CallOption) (*DonorID, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DonorID)
+	err := c.cc.Invoke(ctx, DonorService_RegisterDonor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *donorServiceClient) GetDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DonorInfo, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DonorInfo)
+	err := c.cc.Invoke(ctx, DonorService_GetDonor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *donorServiceClient) GetAllDonors(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*DonorList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DonorList)
+	err := c.cc.Invoke(ctx, DonorService_GetAllDonors_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// DonorServiceServer is the server API for DonorService service.
+// All implementations must embed UnimplementedDonorServiceServer
+// for forward compatibility.
+//
+// Donor Service
+type DonorServiceServer interface {
+	RegisterDonor(context.Context, *NewDonor) (*DonorID, error)
+	GetDonor(context.Context, *DonorID) (*DonorInfo, error)
+	GetAllDonors(context.Context, *NoParam) (*DonorList, error)
+	mustEmbedUnimplementedDonorServiceServer()
+}
+
+// UnimplementedDonorServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedDonorServiceServer struct{}
+
+func (UnimplementedDonorServiceServer) RegisterDonor(context.Context, *NewDonor) (*DonorID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterDonor not implemented")
+}
+func (UnimplementedDonorServiceServer) GetDonor(context.Context, *DonorID) (*DonorInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDonor not implemented")
+}
+func (UnimplementedDonorServiceServer) GetAllDonors(context.Context, *NoParam) (*DonorList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllDonors not implemented")
+}
+func (UnimplementedDonorServiceServer) mustEmbedUnimplementedDonorServiceServer() {}
+func (UnimplementedDonorServiceServer) testEmbeddedByValue()                      {}
+
+// UnsafeDonorServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DonorServiceServer will
+// result in compilation errors.
+type UnsafeDonorServiceServer interface {
+	mustEmbedUnimplementedDonorServiceServer()
+}
+
+func RegisterDonorServiceServer(s grpc.ServiceRegistrar, srv DonorServiceServer) {
+	// If the following call pancis, it indicates UnimplementedDonorServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&DonorService_ServiceDesc, srv)
+}
+
+func _DonorService_RegisterDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewDonor)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DonorServiceServer).RegisterDonor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DonorService_RegisterDonor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DonorServiceServer).RegisterDonor(ctx, req.(*NewDonor))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DonorService_GetDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DonorID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DonorServiceServer).GetDonor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DonorService_GetDonor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DonorServiceServer).GetDonor(ctx, req.(*DonorID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DonorService_GetAllDonors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NoParam)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DonorServiceServer).GetAllDonors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DonorService_GetAllDonors_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DonorServiceServer).GetAllDonors(ctx, req.(*NoParam))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// DonorService_ServiceDesc is the grpc.ServiceDesc for DonorService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var DonorService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "blodBank.DonorService",
+	HandlerType: (*DonorServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "RegisterDonor",
+			Handler:    _DonorService_RegisterDonor_Handler,
+		},
+		{
+			MethodName: "GetDonor",
+			Handler:    _DonorService_GetDonor_Handler,
+		},
+		{
+			MethodName: "GetAllDonors",
+			Handler:    _DonorService_GetAllDonors_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
