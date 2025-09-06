@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -40,4 +41,23 @@ func main() {
 		log.Fatalf("Cannot register donor: %v", err)
 	}
 	fmt.Printf("Registered donor with id: %s\n", r.GetId())
+
+	donorID := blodBank.DonorID{Id: "2"}
+	nr, err := c.GetDonor(ctx, &donorID)
+	if err != nil {
+		log.Fatalf("Cannot get donor: %v", err)
+	}
+
+	fmt.Printf("Got Donor Info: %v\n", nr)
+
+	resp, err := c.GetAllDonors(ctx, &blodBank.NoParam{})
+	if err != nil {
+		log.Fatalf("Cannot get donor list: %v", err)
+	}
+	orgList, err := json.MarshalIndent(resp, "", " ")
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	fmt.Println(string(orgList))
 }
