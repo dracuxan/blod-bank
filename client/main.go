@@ -31,24 +31,41 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	newDonor := blodBank.NewDonor{
-		Name:     "Nisarg",
-		BlodType: "B+",
-	}
+	// newDonor := blodBank.NewDonor{
+	// 	Name:     "Nisarg",
+	// 	BlodType: "B+",
+	// }
+	//
+	// r, err := c.RegisterDonor(ctx, &newDonor)
+	// if err != nil {
+	// 	log.Fatalf("Cannot register donor: %v", err)
+	// }
+	// fmt.Printf("Registered donor with id: %s\n", r.GetId())
+	//
+	// donorID := blodBank.DonorID{Id: "2"}
+	// nr, err := c.GetDonor(ctx, &donorID)
+	// if err != nil {
+	// 	log.Fatalf("Cannot get donor: %v", err)
+	// }
+	//
+	// fmt.Printf("Got Donor Info: %v\n", nr)
 
-	r, err := c.RegisterDonor(ctx, &newDonor)
+	// updDonor := blodBank.DonorInfo{Id: "2", Name: "Niraj", BlodType: "C-"}
+	//
+	// updResp, err := c.UpdateDonor(ctx, &updDonor)
+	// if err != nil {
+	// 	log.Fatalf("Cannot update donor: %v", err)
+	// }
+	//
+	// fmt.Println(updResp)
+
+	delDonor := blodBank.DonorID{Id: "1"}
+
+	delResp, err := c.DeleteDonor(ctx, &delDonor)
 	if err != nil {
-		log.Fatalf("Cannot register donor: %v", err)
+		log.Fatalf("Cannot delete donor: %v", err)
 	}
-	fmt.Printf("Registered donor with id: %s\n", r.GetId())
-
-	donorID := blodBank.DonorID{Id: "2"}
-	nr, err := c.GetDonor(ctx, &donorID)
-	if err != nil {
-		log.Fatalf("Cannot get donor: %v", err)
-	}
-
-	fmt.Printf("Got Donor Info: %v\n", nr)
+	fmt.Println(delResp)
 
 	resp, err := c.GetAllDonors(ctx, &blodBank.NoParam{})
 	if err != nil {

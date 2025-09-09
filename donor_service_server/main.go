@@ -22,6 +22,28 @@ type server struct {
 
 var donors = make(map[int]*blodBank.DonorInfo)
 
+func (s *server) UpdateDonor(_ context.Context, info *blodBank.DonorInfo) (*blodBank.DonorInfo, error) {
+	id, _ := strconv.Atoi(info.GetId())
+	_, ok := donors[id]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "donor with id %d does not exist!", id)
+	}
+	donors[id] = info
+
+	log.Printf("Updated donor with id: %d", id)
+	return info, nil
+}
+
+func (s *server) DeleteDonor(_ context.Context, id *blodBank.DonorID) (*blodBank.DeleteDonorResponse, error) {
+	int_id, err := strconv.Atoi(id.GetId())
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "bad request. invalid id")
+	}
+	delete(donors, int_id)
+	log.Printf("Deleted donor with id: %d", int_id)
+	return &blodBank.DeleteDonorResponse{Message: fmt.Sprintf("Deleted donor with id: %d", int_id)}, nil
+}
+
 func (s *server) GetAllDonors(_ context.Context, in *blodBank.NoParam) (*blodBank.DonorList, error) {
 	var allDonors []*blodBank.DonorInfo
 	for _, i := range donors {

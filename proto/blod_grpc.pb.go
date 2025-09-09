@@ -124,6 +124,8 @@ const (
 	DonorService_RegisterDonor_FullMethodName = "/blodBank.DonorService/RegisterDonor"
 	DonorService_GetDonor_FullMethodName      = "/blodBank.DonorService/GetDonor"
 	DonorService_GetAllDonors_FullMethodName  = "/blodBank.DonorService/GetAllDonors"
+	DonorService_UpdateDonor_FullMethodName   = "/blodBank.DonorService/UpdateDonor"
+	DonorService_DeleteDonor_FullMethodName   = "/blodBank.DonorService/DeleteDonor"
 )
 
 // DonorServiceClient is the client API for DonorService service.
@@ -135,6 +137,8 @@ type DonorServiceClient interface {
 	RegisterDonor(ctx context.Context, in *NewDonor, opts ...grpc.CallOption) (*DonorID, error)
 	GetDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DonorInfo, error)
 	GetAllDonors(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*DonorList, error)
+	UpdateDonor(ctx context.Context, in *DonorInfo, opts ...grpc.CallOption) (*DonorInfo, error)
+	DeleteDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DeleteDonorResponse, error)
 }
 
 type donorServiceClient struct {
@@ -175,6 +179,26 @@ func (c *donorServiceClient) GetAllDonors(ctx context.Context, in *NoParam, opts
 	return out, nil
 }
 
+func (c *donorServiceClient) UpdateDonor(ctx context.Context, in *DonorInfo, opts ...grpc.CallOption) (*DonorInfo, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DonorInfo)
+	err := c.cc.Invoke(ctx, DonorService_UpdateDonor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *donorServiceClient) DeleteDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DeleteDonorResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteDonorResponse)
+	err := c.cc.Invoke(ctx, DonorService_DeleteDonor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DonorServiceServer is the server API for DonorService service.
 // All implementations must embed UnimplementedDonorServiceServer
 // for forward compatibility.
@@ -184,6 +208,8 @@ type DonorServiceServer interface {
 	RegisterDonor(context.Context, *NewDonor) (*DonorID, error)
 	GetDonor(context.Context, *DonorID) (*DonorInfo, error)
 	GetAllDonors(context.Context, *NoParam) (*DonorList, error)
+	UpdateDonor(context.Context, *DonorInfo) (*DonorInfo, error)
+	DeleteDonor(context.Context, *DonorID) (*DeleteDonorResponse, error)
 	mustEmbedUnimplementedDonorServiceServer()
 }
 
@@ -202,6 +228,12 @@ func (UnimplementedDonorServiceServer) GetDonor(context.Context, *DonorID) (*Don
 }
 func (UnimplementedDonorServiceServer) GetAllDonors(context.Context, *NoParam) (*DonorList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllDonors not implemented")
+}
+func (UnimplementedDonorServiceServer) UpdateDonor(context.Context, *DonorInfo) (*DonorInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDonor not implemented")
+}
+func (UnimplementedDonorServiceServer) DeleteDonor(context.Context, *DonorID) (*DeleteDonorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDonor not implemented")
 }
 func (UnimplementedDonorServiceServer) mustEmbedUnimplementedDonorServiceServer() {}
 func (UnimplementedDonorServiceServer) testEmbeddedByValue()                      {}
@@ -278,6 +310,42 @@ func _DonorService_GetAllDonors_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DonorService_UpdateDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DonorInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DonorServiceServer).UpdateDonor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DonorService_UpdateDonor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DonorServiceServer).UpdateDonor(ctx, req.(*DonorInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DonorService_DeleteDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DonorID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DonorServiceServer).DeleteDonor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DonorService_DeleteDonor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DonorServiceServer).DeleteDonor(ctx, req.(*DonorID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DonorService_ServiceDesc is the grpc.ServiceDesc for DonorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -296,6 +364,14 @@ var DonorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllDonors",
 			Handler:    _DonorService_GetAllDonors_Handler,
+		},
+		{
+			MethodName: "UpdateDonor",
+			Handler:    _DonorService_UpdateDonor_Handler,
+		},
+		{
+			MethodName: "DeleteDonor",
+			Handler:    _DonorService_DeleteDonor_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

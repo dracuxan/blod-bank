@@ -15,7 +15,12 @@ service DonorService {
   rpc RegisterDonor(NewDonor) returns (DonorID);
   rpc GetDonor(DonorID) returns (DonorInfo);
   rpc GetAllDonors(NoParam) returns (DonorList);
+  rpc UpdateDonor(DonorInfo) returns (DonorInfo);
+  rpc DeleteDonor(DonorID) returns (DeleteDonorResponse);
+  // completes stage one for all basic CRUD operations
 }
+
+message DeleteDonorResponse { string message = 1; }
 
 message NewDonor {
   string name = 1;
