@@ -3,36 +3,30 @@ package blodBank;
 
 option go_package = "./blodBank";
 
+// System Service
 service SystemService { rpc Ping(NoParam) returns (SystemStatus); }
 
 message NoParam {};
 
-// System Service
 message SystemStatus { string message = 1; };
 
-// Donor Service
-service DonorService {
-  rpc RegisterDonor(NewDonor) returns (DonorID);
-  rpc GetDonor(DonorID) returns (DonorInfo);
-  rpc GetAllDonors(NoParam) returns (DonorList);
-  rpc UpdateDonor(DonorInfo) returns (DonorInfo);
-  rpc DeleteDonor(DonorID) returns (DeleteDonorResponse);
-  // completes stage one for all basic CRUD operations
+// Blod(Config) Bank Service
+service BlodBankService {
+  rpc RegisterConfig(ConfigItem) returns (Status);
+  rpc GetConfig(ConfigID) returns (ConfigItem);
+  rpc ListAllConfig(NoParam) returns (stream ConfigItem);
+  rpc DeleteConfig(ConfigID) returns (Status);
+  rpc UpdateConfig(ConfigItem) returns (Status);
 }
 
-message DeleteDonorResponse { string message = 1; }
-
-message NewDonor {
-  string name = 1;
-  string blod_type = 2;
-}
-
-message DonorID { string id = 1; }
-
-message DonorInfo {
+message ConfigItem {
   string id = 1;
   string name = 2;
-  string blod_type = 3;
-};
+  string content = 3;
+  string created_at = 4;
+  string updated_at = 5;
+}
 
-message DonorList { repeated DonorInfo donors = 1; }
+message ConfigID { string id = 1; }
+
+message Status { string status = 1; }

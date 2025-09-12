@@ -25,6 +25,8 @@ const (
 // SystemServiceClient is the client API for SystemService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// System Service
 type SystemServiceClient interface {
 	Ping(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*SystemStatus, error)
 }
@@ -50,6 +52,8 @@ func (c *systemServiceClient) Ping(ctx context.Context, in *NoParam, opts ...grp
 // SystemServiceServer is the server API for SystemService service.
 // All implementations must embed UnimplementedSystemServiceServer
 // for forward compatibility.
+//
+// System Service
 type SystemServiceServer interface {
 	Ping(context.Context, *NoParam) (*SystemStatus, error)
 	mustEmbedUnimplementedSystemServiceServer()
@@ -121,259 +125,263 @@ var SystemService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	DonorService_RegisterDonor_FullMethodName = "/blodBank.DonorService/RegisterDonor"
-	DonorService_GetDonor_FullMethodName      = "/blodBank.DonorService/GetDonor"
-	DonorService_GetAllDonors_FullMethodName  = "/blodBank.DonorService/GetAllDonors"
-	DonorService_UpdateDonor_FullMethodName   = "/blodBank.DonorService/UpdateDonor"
-	DonorService_DeleteDonor_FullMethodName   = "/blodBank.DonorService/DeleteDonor"
+	BlodBankService_RegisterConfig_FullMethodName = "/blodBank.BlodBankService/RegisterConfig"
+	BlodBankService_GetConfig_FullMethodName      = "/blodBank.BlodBankService/GetConfig"
+	BlodBankService_ListAllConfig_FullMethodName  = "/blodBank.BlodBankService/ListAllConfig"
+	BlodBankService_DeleteConfig_FullMethodName   = "/blodBank.BlodBankService/DeleteConfig"
+	BlodBankService_UpdateConfig_FullMethodName   = "/blodBank.BlodBankService/UpdateConfig"
 )
 
-// DonorServiceClient is the client API for DonorService service.
+// BlodBankServiceClient is the client API for BlodBankService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Donor Service
-type DonorServiceClient interface {
-	RegisterDonor(ctx context.Context, in *NewDonor, opts ...grpc.CallOption) (*DonorID, error)
-	GetDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DonorInfo, error)
-	GetAllDonors(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*DonorList, error)
-	UpdateDonor(ctx context.Context, in *DonorInfo, opts ...grpc.CallOption) (*DonorInfo, error)
-	DeleteDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DeleteDonorResponse, error)
+// Blod(Config) Bank Service
+type BlodBankServiceClient interface {
+	RegisterConfig(ctx context.Context, in *ConfigItem, opts ...grpc.CallOption) (*Status, error)
+	GetConfig(ctx context.Context, in *ConfigID, opts ...grpc.CallOption) (*ConfigItem, error)
+	ListAllConfig(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ConfigItem], error)
+	DeleteConfig(ctx context.Context, in *ConfigID, opts ...grpc.CallOption) (*Status, error)
+	UpdateConfig(ctx context.Context, in *ConfigItem, opts ...grpc.CallOption) (*Status, error)
 }
 
-type donorServiceClient struct {
+type blodBankServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDonorServiceClient(cc grpc.ClientConnInterface) DonorServiceClient {
-	return &donorServiceClient{cc}
+func NewBlodBankServiceClient(cc grpc.ClientConnInterface) BlodBankServiceClient {
+	return &blodBankServiceClient{cc}
 }
 
-func (c *donorServiceClient) RegisterDonor(ctx context.Context, in *NewDonor, opts ...grpc.CallOption) (*DonorID, error) {
+func (c *blodBankServiceClient) RegisterConfig(ctx context.Context, in *ConfigItem, opts ...grpc.CallOption) (*Status, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DonorID)
-	err := c.cc.Invoke(ctx, DonorService_RegisterDonor_FullMethodName, in, out, cOpts...)
+	out := new(Status)
+	err := c.cc.Invoke(ctx, BlodBankService_RegisterConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *donorServiceClient) GetDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DonorInfo, error) {
+func (c *blodBankServiceClient) GetConfig(ctx context.Context, in *ConfigID, opts ...grpc.CallOption) (*ConfigItem, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DonorInfo)
-	err := c.cc.Invoke(ctx, DonorService_GetDonor_FullMethodName, in, out, cOpts...)
+	out := new(ConfigItem)
+	err := c.cc.Invoke(ctx, BlodBankService_GetConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *donorServiceClient) GetAllDonors(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (*DonorList, error) {
+func (c *blodBankServiceClient) ListAllConfig(ctx context.Context, in *NoParam, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ConfigItem], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DonorList)
-	err := c.cc.Invoke(ctx, DonorService_GetAllDonors_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &BlodBankService_ServiceDesc.Streams[0], BlodBankService_ListAllConfig_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[NoParam, ConfigItem]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type BlodBankService_ListAllConfigClient = grpc.ServerStreamingClient[ConfigItem]
+
+func (c *blodBankServiceClient) DeleteConfig(ctx context.Context, in *ConfigID, opts ...grpc.CallOption) (*Status, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Status)
+	err := c.cc.Invoke(ctx, BlodBankService_DeleteConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *donorServiceClient) UpdateDonor(ctx context.Context, in *DonorInfo, opts ...grpc.CallOption) (*DonorInfo, error) {
+func (c *blodBankServiceClient) UpdateConfig(ctx context.Context, in *ConfigItem, opts ...grpc.CallOption) (*Status, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DonorInfo)
-	err := c.cc.Invoke(ctx, DonorService_UpdateDonor_FullMethodName, in, out, cOpts...)
+	out := new(Status)
+	err := c.cc.Invoke(ctx, BlodBankService_UpdateConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *donorServiceClient) DeleteDonor(ctx context.Context, in *DonorID, opts ...grpc.CallOption) (*DeleteDonorResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteDonorResponse)
-	err := c.cc.Invoke(ctx, DonorService_DeleteDonor_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// DonorServiceServer is the server API for DonorService service.
-// All implementations must embed UnimplementedDonorServiceServer
+// BlodBankServiceServer is the server API for BlodBankService service.
+// All implementations must embed UnimplementedBlodBankServiceServer
 // for forward compatibility.
 //
-// Donor Service
-type DonorServiceServer interface {
-	RegisterDonor(context.Context, *NewDonor) (*DonorID, error)
-	GetDonor(context.Context, *DonorID) (*DonorInfo, error)
-	GetAllDonors(context.Context, *NoParam) (*DonorList, error)
-	UpdateDonor(context.Context, *DonorInfo) (*DonorInfo, error)
-	DeleteDonor(context.Context, *DonorID) (*DeleteDonorResponse, error)
-	mustEmbedUnimplementedDonorServiceServer()
+// Blod(Config) Bank Service
+type BlodBankServiceServer interface {
+	RegisterConfig(context.Context, *ConfigItem) (*Status, error)
+	GetConfig(context.Context, *ConfigID) (*ConfigItem, error)
+	ListAllConfig(*NoParam, grpc.ServerStreamingServer[ConfigItem]) error
+	DeleteConfig(context.Context, *ConfigID) (*Status, error)
+	UpdateConfig(context.Context, *ConfigItem) (*Status, error)
+	mustEmbedUnimplementedBlodBankServiceServer()
 }
 
-// UnimplementedDonorServiceServer must be embedded to have
+// UnimplementedBlodBankServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedDonorServiceServer struct{}
+type UnimplementedBlodBankServiceServer struct{}
 
-func (UnimplementedDonorServiceServer) RegisterDonor(context.Context, *NewDonor) (*DonorID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterDonor not implemented")
+func (UnimplementedBlodBankServiceServer) RegisterConfig(context.Context, *ConfigItem) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterConfig not implemented")
 }
-func (UnimplementedDonorServiceServer) GetDonor(context.Context, *DonorID) (*DonorInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDonor not implemented")
+func (UnimplementedBlodBankServiceServer) GetConfig(context.Context, *ConfigID) (*ConfigItem, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
 }
-func (UnimplementedDonorServiceServer) GetAllDonors(context.Context, *NoParam) (*DonorList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllDonors not implemented")
+func (UnimplementedBlodBankServiceServer) ListAllConfig(*NoParam, grpc.ServerStreamingServer[ConfigItem]) error {
+	return status.Errorf(codes.Unimplemented, "method ListAllConfig not implemented")
 }
-func (UnimplementedDonorServiceServer) UpdateDonor(context.Context, *DonorInfo) (*DonorInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateDonor not implemented")
+func (UnimplementedBlodBankServiceServer) DeleteConfig(context.Context, *ConfigID) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteConfig not implemented")
 }
-func (UnimplementedDonorServiceServer) DeleteDonor(context.Context, *DonorID) (*DeleteDonorResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteDonor not implemented")
+func (UnimplementedBlodBankServiceServer) UpdateConfig(context.Context, *ConfigItem) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfig not implemented")
 }
-func (UnimplementedDonorServiceServer) mustEmbedUnimplementedDonorServiceServer() {}
-func (UnimplementedDonorServiceServer) testEmbeddedByValue()                      {}
+func (UnimplementedBlodBankServiceServer) mustEmbedUnimplementedBlodBankServiceServer() {}
+func (UnimplementedBlodBankServiceServer) testEmbeddedByValue()                         {}
 
-// UnsafeDonorServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DonorServiceServer will
+// UnsafeBlodBankServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BlodBankServiceServer will
 // result in compilation errors.
-type UnsafeDonorServiceServer interface {
-	mustEmbedUnimplementedDonorServiceServer()
+type UnsafeBlodBankServiceServer interface {
+	mustEmbedUnimplementedBlodBankServiceServer()
 }
 
-func RegisterDonorServiceServer(s grpc.ServiceRegistrar, srv DonorServiceServer) {
-	// If the following call pancis, it indicates UnimplementedDonorServiceServer was
+func RegisterBlodBankServiceServer(s grpc.ServiceRegistrar, srv BlodBankServiceServer) {
+	// If the following call pancis, it indicates UnimplementedBlodBankServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&DonorService_ServiceDesc, srv)
+	s.RegisterService(&BlodBankService_ServiceDesc, srv)
 }
 
-func _DonorService_RegisterDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewDonor)
+func _BlodBankService_RegisterConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfigItem)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DonorServiceServer).RegisterDonor(ctx, in)
+		return srv.(BlodBankServiceServer).RegisterConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DonorService_RegisterDonor_FullMethodName,
+		FullMethod: BlodBankService_RegisterConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DonorServiceServer).RegisterDonor(ctx, req.(*NewDonor))
+		return srv.(BlodBankServiceServer).RegisterConfig(ctx, req.(*ConfigItem))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DonorService_GetDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DonorID)
+func _BlodBankService_GetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfigID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DonorServiceServer).GetDonor(ctx, in)
+		return srv.(BlodBankServiceServer).GetConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DonorService_GetDonor_FullMethodName,
+		FullMethod: BlodBankService_GetConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DonorServiceServer).GetDonor(ctx, req.(*DonorID))
+		return srv.(BlodBankServiceServer).GetConfig(ctx, req.(*ConfigID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DonorService_GetAllDonors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NoParam)
+func _BlodBankService_ListAllConfig_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(NoParam)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(BlodBankServiceServer).ListAllConfig(m, &grpc.GenericServerStream[NoParam, ConfigItem]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type BlodBankService_ListAllConfigServer = grpc.ServerStreamingServer[ConfigItem]
+
+func _BlodBankService_DeleteConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfigID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DonorServiceServer).GetAllDonors(ctx, in)
+		return srv.(BlodBankServiceServer).DeleteConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DonorService_GetAllDonors_FullMethodName,
+		FullMethod: BlodBankService_DeleteConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DonorServiceServer).GetAllDonors(ctx, req.(*NoParam))
+		return srv.(BlodBankServiceServer).DeleteConfig(ctx, req.(*ConfigID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DonorService_UpdateDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DonorInfo)
+func _BlodBankService_UpdateConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfigItem)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DonorServiceServer).UpdateDonor(ctx, in)
+		return srv.(BlodBankServiceServer).UpdateConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DonorService_UpdateDonor_FullMethodName,
+		FullMethod: BlodBankService_UpdateConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DonorServiceServer).UpdateDonor(ctx, req.(*DonorInfo))
+		return srv.(BlodBankServiceServer).UpdateConfig(ctx, req.(*ConfigItem))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DonorService_DeleteDonor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DonorID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DonorServiceServer).DeleteDonor(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DonorService_DeleteDonor_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DonorServiceServer).DeleteDonor(ctx, req.(*DonorID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// DonorService_ServiceDesc is the grpc.ServiceDesc for DonorService service.
+// BlodBankService_ServiceDesc is the grpc.ServiceDesc for BlodBankService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DonorService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "blodBank.DonorService",
-	HandlerType: (*DonorServiceServer)(nil),
+var BlodBankService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "blodBank.BlodBankService",
+	HandlerType: (*BlodBankServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "RegisterDonor",
-			Handler:    _DonorService_RegisterDonor_Handler,
+			MethodName: "RegisterConfig",
+			Handler:    _BlodBankService_RegisterConfig_Handler,
 		},
 		{
-			MethodName: "GetDonor",
-			Handler:    _DonorService_GetDonor_Handler,
+			MethodName: "GetConfig",
+			Handler:    _BlodBankService_GetConfig_Handler,
 		},
 		{
-			MethodName: "GetAllDonors",
-			Handler:    _DonorService_GetAllDonors_Handler,
+			MethodName: "DeleteConfig",
+			Handler:    _BlodBankService_DeleteConfig_Handler,
 		},
 		{
-			MethodName: "UpdateDonor",
-			Handler:    _DonorService_UpdateDonor_Handler,
-		},
-		{
-			MethodName: "DeleteDonor",
-			Handler:    _DonorService_DeleteDonor_Handler,
+			MethodName: "UpdateConfig",
+			Handler:    _BlodBankService_UpdateConfig_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "ListAllConfig",
+			Handler:       _BlodBankService_ListAllConfig_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "proto/blod.proto",
 }
