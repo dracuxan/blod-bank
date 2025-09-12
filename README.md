@@ -8,22 +8,22 @@ Currently supports fetching and listing stored YAML-like config files.
 ```sh
 blod-bank
 │
+├── server
+│   └── main.go
+├── status_server
+│   └── main.go
 ├── client
 │   └── main.go
-├── flake.lock
-├── flake.nix
-├── go.mod
-├── go.sum
-├── LICENSE
 ├── proto
 │   ├── blod_grpc.pb.go
 │   ├── blod.pb.go
 │   └── blod.proto
+├── go.mod
+├── go.sum
+├── flake.lock
+├── flake.nix
 ├── README.md
-├── server
-│   └── main.go
-└── status_server
-    └── main.go
+└── LICENSE
 ```
 
 ## Getting Started
