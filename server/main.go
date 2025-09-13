@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 	"time"
 
 	blodBank "github.com/dracuxan/blod-bank/proto"
@@ -18,7 +19,7 @@ var port = flag.Int("port", 5001, "Server port")
 
 type server struct {
 	blodBank.UnimplementedBlodBankServiceServer
-	savedConfigs []*blodBank.ConfigItem
+	savedConfigs map[int]*blodBank.ConfigItem
 }
 
 var dummyconfig = &blodBank.ConfigItem{
@@ -61,34 +62,66 @@ func main() {
 
 func newServer() *server {
 	s := &server{
-		savedConfigs: []*blodBank.ConfigItem{dummyconfig, dummyconfig1},
+		savedConfigs: map[int]*blodBank.ConfigItem{
+			1: dummyconfig,
+			2: dummyconfig1,
+		},
 	}
 	return s
 }
 
 func (s *server) GetConfig(_ context.Context, configItemID *blodBank.ConfigID) (*blodBank.ConfigItem, error) {
+	log.Printf("sending config with id %s", configItemID.Id)
+
 	for _, item := range s.savedConfigs {
 		if item.Id == configItemID.Id {
 			return item, nil
 		}
 	}
+
 	return nil, status.Errorf(codes.NotFound, "invalid id")
 }
 
 func (s *server) ListAllConfig(configItem *blodBank.NoParam, stream grpc.ServerStreamingServer[blodBank.ConfigItem]) error {
+	log.Println("streaming list of all the configs")
+
 	for _, item := range s.savedConfigs {
 		if err := stream.Send(item); err != nil {
-			return err
+			return status.Error(codes.Aborted, "bad request")
 		}
 	}
+
 	return nil
 }
 
-// func (s *server) RegisterConfig(ctx context.Context, configItem *blodBank.ConfigItem) (*blodBank.Status, error) {
-// }
+func (s *server) RegisterConfig(_ context.Context, configItem *blodBank.ConfigItem) (*blodBank.Status, error) {
+	id := len(s.savedConfigs) + 1
 
-// func (s *server) DeleteConfig(ctx context.Context, configItem *blodBank.ConfigID) (*blodBank.Status, error) {
-// }
-//
+	newConfig := &blodBank.ConfigItem{
+		Id:        strconv.Itoa(id),
+		Name:      configItem.Name,
+		Content:   configItem.Content,
+		CreatedAt: time.Now().String(),
+		UpdatedAt: time.Now().String(),
+	}
+	s.savedConfigs[id] = newConfig
+
+	log.Printf("New config with id %d registered", id)
+
+	return &blodBank.Status{Status: "Registerd new config"}, nil
+}
+
+func (s *server) DeleteConfig(ctx context.Context, configID *blodBank.ConfigID) (*blodBank.Status, error) {
+	id, err := strconv.Atoi(configID.Id)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "bad request. invalid id")
+	}
+	delete(s.savedConfigs, id)
+
+	log.Printf("Deleted config with id %d", id)
+
+	return &blodBank.Status{Status: fmt.Sprintf("Deleted config with id: %d", id)}, nil
+}
+
 // func (s *server) UpdateConfig(ctx context.Context, configItem *blodBank.ConfigItem) (*blodBank.Status, error) {
 // }

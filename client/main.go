@@ -3,11 +3,10 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
-	"io"
 	"log"
 	"time"
 
+	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -32,26 +31,18 @@ func main() {
 	defer cancel()
 
 	// confID := blodBank.ConfigID{Id: "1"}
-	// resp, err := c.GetConfig(ctx, &confID)
-	// if err != nil {
-	// 	log.Fatalf("Cannot get config: %v", err)
+	// helper.DeleteConfig(ctx, &confID, c)
+	// helper.GetConfig(ctx, &confID, c)
+	// println()
+
+	helper.ListAllConfig(ctx, c)
+
+	// dummyconfig := &blodBank.ConfigItem{
+	// 	Name: "msf.conf",
+	// 	Content: `username: "msf"
+	//  pass: "password"
+	//  	`,
 	// }
 	//
-	// fmt.Println(resp)
-
-	stream, err := c.ListAllConfig(ctx, &blodBank.NoParam{})
-	if err != nil {
-		log.Fatalf("Cannot get config list: %v", err)
-	}
-
-	for {
-		config, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatalf("client.ListConfigs failed: %v", err)
-		}
-		fmt.Println("Config: ", config)
-	}
+	// helper.RegisterConfig(ctx, dummyconfig, c)
 }
