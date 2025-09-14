@@ -3,13 +3,6 @@ package blodBank;
 
 option go_package = "./blodBank";
 
-// System Service
-service SystemService { rpc Ping(NoParam) returns (SystemStatus); }
-
-message NoParam {};
-
-message SystemStatus { string message = 1; };
-
 // Blod(Config) Bank Service
 service BlodBankService {
   rpc RegisterConfig(ConfigItem) returns (Status);
@@ -30,3 +23,5 @@ message ConfigItem {
 message ConfigID { string id = 1; }
 
 message Status { string status = 1; }
+
+message NoParam {};

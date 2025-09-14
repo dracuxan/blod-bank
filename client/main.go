@@ -1,48 +1,28 @@
 package main
 
 import (
-	"context"
-	"flag"
+	"fmt"
 	"log"
-	"time"
+	"os"
 
-	"github.com/dracuxan/blod-bank/client/helper"
-	blodBank "github.com/dracuxan/blod-bank/proto"
+	"github.com/dracuxan/blod-bank/client/runner"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// statusAddr       = flag.String("statusAddr", "localhost:5000", "server address to check server status")
-var configServer = flag.String("configServiceAddr", "localhost:5001", "server address for Config Service")
+var configServer = "localhost:5001"
 
 func main() {
-	flag.Parse()
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: ./client <command> --<optional sub commands>")
+	}
 
-	conn, err := grpc.NewClient(*configServer, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(configServer, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 
 	defer conn.Close()
 
-	c := blodBank.NewBlodBankServiceClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	// confID := blodBank.ConfigID{Id: "1"}
-	// helper.DeleteConfig(ctx, &confID, c)
-	// helper.GetConfig(ctx, &confID, c)
-	// println()
-
-	dummyconfig := &blodBank.ConfigItem{
-		Id:   "1",
-		Name: "msg.conf",
-		Content: `username: "msf"
-	 pass: "password"
-	 	`,
-	}
-
-	helper.UpdateConfig(ctx, dummyconfig, c)
-	helper.ListAllConfig(ctx, c)
+	runner.Run(conn)
 }
