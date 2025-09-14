@@ -36,7 +36,7 @@ blod-bank
    go run server/main.go
    ```
 3. Run the client:
-   ```
+   ```sh
    go run client/main.go
    ```
 
