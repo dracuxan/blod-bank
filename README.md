@@ -9,19 +9,21 @@ Currently supports fetching and listing stored YAML-like config files.
 blod-bank
 │
 ├── server
-│   └── main.go
-├── status_server
 │   └── main.go
 ├── client
-│   └── main.go
+│   ├── helper
+│   │   └── helper.go
+│   ├── main.go
+│   └── runner
+│       └── run.go
 ├── proto
 │   ├── blod_grpc.pb.go
 │   ├── blod.pb.go
 │   └── blod.proto
-├── go.mod
-├── go.sum
 ├── flake.lock
 ├── flake.nix
+├── go.mod
+├── go.sum
 ├── README.md
 └── LICENSE
 ```
