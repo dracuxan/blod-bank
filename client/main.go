@@ -35,14 +35,14 @@ func main() {
 	// helper.GetConfig(ctx, &confID, c)
 	// println()
 
-	helper.ListAllConfig(ctx, c)
+	dummyconfig := &blodBank.ConfigItem{
+		Id:   "1",
+		Name: "msg.conf",
+		Content: `username: "msf"
+	 pass: "password"
+	 	`,
+	}
 
-	// dummyconfig := &blodBank.ConfigItem{
-	// 	Name: "msf.conf",
-	// 	Content: `username: "msf"
-	//  pass: "password"
-	//  	`,
-	// }
-	//
-	// helper.RegisterConfig(ctx, dummyconfig, c)
+	helper.UpdateConfig(ctx, dummyconfig, c)
+	helper.ListAllConfig(ctx, c)
 }

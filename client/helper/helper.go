@@ -59,3 +59,11 @@ func DeleteConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBan
 	}
 	fmt.Println(status.Status)
 }
+
+func UpdateConfig(ctx context.Context, item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient) {
+	status, err := c.UpdateConfig(ctx, item)
+	if err != nil {
+		log.Fatalf("Cannot update config: %v", err)
+	}
+	fmt.Println(status.Status)
+}

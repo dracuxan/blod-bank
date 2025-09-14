@@ -123,5 +123,18 @@ func (s *server) DeleteConfig(ctx context.Context, configID *blodBank.ConfigID) 
 	return &blodBank.Status{Status: fmt.Sprintf("Deleted config with id: %d", id)}, nil
 }
 
-// func (s *server) UpdateConfig(ctx context.Context, configItem *blodBank.ConfigItem) (*blodBank.Status, error) {
-// }
+func (s *server) UpdateConfig(ctx context.Context, configItem *blodBank.ConfigItem) (*blodBank.Status, error) {
+	id, err := strconv.Atoi(configItem.Id)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "bad request. invalid id")
+	}
+	_, ok := s.savedConfigs[id]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "invalid id")
+	}
+
+	s.savedConfigs[id] = configItem
+	log.Printf("Updated config with id %d", id)
+
+	return &blodBank.Status{Status: fmt.Sprintf("updated config with id %d", id)}, nil
+}
