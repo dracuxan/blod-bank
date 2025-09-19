@@ -44,7 +44,7 @@ blod-bank
 
 - [x] Get single config
 - [x] List all config
-- [ ] Register new config
+- [x] Register new config
 - [ ] Update config
 - [ ] Delete config
 - [ ] Basic CLI tool

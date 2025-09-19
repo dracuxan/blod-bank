@@ -14,8 +14,12 @@ var configServer = "localhost:5001"
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: ./client <command> --<optional sub commands>")
+		fmt.Println("Usage: ./client <command> [command-flags]")
+		fmt.Println("Commands: get, register, delete, list, update")
+		os.Exit(1)
 	}
+
+	option := os.Args[1]
 
 	conn, err := grpc.NewClient(configServer, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -24,5 +28,5 @@ func main() {
 
 	defer conn.Close()
 
-	runner.Run(conn)
+	runner.Run(conn, option)
 }
