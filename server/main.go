@@ -22,63 +22,15 @@ type server struct {
 	savedConfigs map[int]*blodBank.ConfigItem
 }
 
-var dummyconfig = &blodBank.ConfigItem{
-	Id:   "1",
-	Name: "msf.conf",
-	Content: `
-	username: "msf"
-	pass: "password"
-	`,
-	CreatedAt: time.Now().String(),
-	UpdatedAt: time.Now().String(),
-}
-
-var dummyconfig1 = &blodBank.ConfigItem{
-	Id:   "2",
-	Name: "shodan.conf",
-	Content: `
-	username: "shodan"
-	pass: "password"
-	`,
-	CreatedAt: time.Now().String(),
-	UpdatedAt: time.Now().String(),
-}
-
-func main() {
-	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	grpcServer := grpc.NewServer()
-	blodBank.RegisterBlodBankServiceServer(grpcServer, newServer())
-
-	log.Printf("gRPC server listening on %v", lis.Addr())
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
-}
-
-func newServer() *server {
-	s := &server{
-		savedConfigs: map[int]*blodBank.ConfigItem{
-			1: dummyconfig,
-			2: dummyconfig1,
-		},
-	}
-	return s
-}
-
 func (s *server) GetConfig(_ context.Context, configItemID *blodBank.ConfigID) (*blodBank.ConfigItem, error) {
-	log.Printf("sending config with id %s", configItemID.Id)
-
 	for _, item := range s.savedConfigs {
 		if item.Id == configItemID.Id {
+			log.Printf("sending config with id %s", configItemID.Id)
 			return item, nil
 		}
 	}
 
+	log.Printf("ERROR! cannot find config with id %s", configItemID.Id)
 	return nil, status.Errorf(codes.NotFound, "invalid id")
 }
 
@@ -114,12 +66,12 @@ func (s *server) RegisterConfig(_ context.Context, configItem *blodBank.ConfigIt
 func (s *server) DeleteConfig(ctx context.Context, configID *blodBank.ConfigID) (*blodBank.Status, error) {
 	id, err := strconv.Atoi(configID.Id)
 	if err != nil {
+		log.Printf("ERROR while deleteing cofig with id %s: invalid id", configID)
 		return nil, status.Error(codes.Aborted, "bad request. invalid id")
 	}
 	delete(s.savedConfigs, id)
 
 	log.Printf("Deleted config with id %d", id)
-
 	return &blodBank.Status{Status: fmt.Sprintf("Deleted config with id: %d", id)}, nil
 }
 
@@ -130,11 +82,34 @@ func (s *server) UpdateConfig(ctx context.Context, configItem *blodBank.ConfigIt
 	}
 	_, ok := s.savedConfigs[id]
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "invalid id")
+		return nil, status.Error(codes.NotFound, "invalid id")
 	}
 
 	s.savedConfigs[id] = configItem
 	log.Printf("Updated config with id %d", id)
 
 	return &blodBank.Status{Status: fmt.Sprintf("updated config with id %d", id)}, nil
+}
+
+func newServer() *server {
+	s := &server{
+		savedConfigs: map[int]*blodBank.ConfigItem{},
+	}
+	return s
+}
+
+func main() {
+	flag.Parse()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	grpcServer := grpc.NewServer()
+	blodBank.RegisterBlodBankServiceServer(grpcServer, newServer())
+
+	log.Printf("gRPC server listening on %v", lis.Addr())
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

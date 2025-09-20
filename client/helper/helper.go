@@ -17,7 +17,7 @@ func GetConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankSe
 	}
 	orgConf, err := json.MarshalIndent(resp, "", " ")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("cannot marshal response: %v", err)
 	}
 	fmt.Println(string(orgConf))
 }
@@ -38,7 +38,7 @@ func ListAllConfig(ctx context.Context, c blodBank.BlodBankServiceClient) {
 		}
 		orgConf, err := json.MarshalIndent(config, "", " ")
 		if err != nil {
-			log.Fatalln(err)
+			log.Fatalf("cannot marshal response: %v", err)
 		}
 		fmt.Println(string(orgConf))
 	}
