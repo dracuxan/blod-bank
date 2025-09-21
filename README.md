@@ -58,5 +58,5 @@ blod-bank
 
 ## TODO
 
-- [ ] Add database connection
-- [ ] Replace in-memory storage with Postgress in server
+- [x] Add database connection
+- [x] Replace in-memory storage with Postgress in server

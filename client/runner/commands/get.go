@@ -12,11 +12,11 @@ import (
 
 func GetCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
-	getID := getCmd.String("id", "", "Config ID to fetch")
+	getID := getCmd.Int64("id", 0, "Config ID to fetch")
 
 	getCmd.Parse(os.Args[2:])
 
-	if *getID == "" {
+	if *getID == 0 {
 		fmt.Println("Need --id=<> flag!!")
 		os.Exit(1)
 	}

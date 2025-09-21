@@ -12,13 +12,12 @@ import (
 
 func DeleteCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
 	delCmd := flag.NewFlagSet("delete", flag.ExitOnError)
-	delID := delCmd.String("id", "", "id of config to delete")
+	delID := delCmd.Int64("id", 0, "id of config to delete")
 	delCmd.Parse(os.Args[2:])
-	if *delID == "" {
+	if *delID == 0 {
 		fmt.Println("neeeed --id flag!!")
 		os.Exit(1)
 	}
 	fmt.Println("deleting config with id:", *delID)
 	helper.DeleteConfig(ctx, &blodBank.ConfigID{Id: *delID}, c)
 }
-
