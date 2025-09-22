@@ -60,3 +60,4 @@ blod-bank
 
 - [x] Add database connection
 - [x] Replace in-memory storage with Postgress in server
+- [x] Replace raw queries with orm

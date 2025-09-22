@@ -2,103 +2,91 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"flag"
 	"fmt"
 	"log"
 	"net"
-	"time"
 
 	blodBank "github.com/dracuxan/blod-bank/proto"
+	"github.com/dracuxan/blod-bank/server/models"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"gorm.io/gorm"
 )
 
-var (
-	port  = flag.Int("port", 5001, "Server port")
-	dbURL = flag.String("db", "postgres://dracuxan:pass@localhost:5432/blodbank?sslmode=disable", "Postgres connection URL")
-)
+var port = flag.Int("port", 5001, "Server port")
 
 type server struct {
 	blodBank.UnimplementedBlodBankServiceServer
-	db *sql.DB
+	db *gorm.DB
 }
 
 func (s *server) RegisterConfig(_ context.Context, configItem *blodBank.ConfigItem) (*blodBank.Status, error) {
-	query := `
-		INSERT INTO configs (name, content, created_at, updated_at)
-		VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-		RETURNING id, created_at, updated_at;
-	`
+	newConf := models.Configs{
+		Name:    configItem.Name,
+		Content: configItem.Content,
+	}
 
-	var id int
-	var createdAt, updatedAt time.Time
-	err := s.db.QueryRow(query, configItem.Name, configItem.Content).Scan(&id, &createdAt, &updatedAt)
-	if err != nil {
-		log.Printf("ERROR inserting config: %v", err)
+	res := s.db.Create(&newConf)
+	if res.Error != nil {
+		log.Printf("ERROR inserting config: %v", res.Error)
 		return nil, status.Error(codes.Internal, "failed to insert config")
 	}
 
-	log.Printf("New config inserted with id %d", id)
+	configItem.Id = newConf.ID
 
-	return &blodBank.Status{Status: fmt.Sprintf("Registered new config with id %d", id)}, nil
+	log.Printf("New config inserted with id: %d", configItem.Id)
+	return &blodBank.Status{Status: "Registered new config"}, nil
 }
 
 func (s *server) GetConfig(_ context.Context, configItemID *blodBank.ConfigID) (*blodBank.ConfigItem, error) {
-	query := "SELECT * FROM configs WHERE id = $1;"
-	var conf blodBank.ConfigItem
-	row := s.db.QueryRow(query, configItemID.Id)
+	var conf models.Configs
 
-	var createdAt, updatedAt time.Time
-	if err := row.Scan(&conf.Id, &conf.Name, &conf.Content, &createdAt, &updatedAt); err != nil {
+	if err := s.db.First(&conf, configItemID.Id).Error; err != nil {
 		return nil, status.Errorf(codes.NotFound, "config not found")
 	}
-	conf.CreatedAt = createdAt.Format(time.RFC3339)
-	conf.UpdatedAt = updatedAt.Format(time.RFC3339)
 
 	log.Printf("Fetched config with id: %d", configItemID.Id)
-	return &conf, nil
+	protoConf := &blodBank.ConfigItem{
+		Id:        conf.ID,
+		Name:      conf.Name,
+		Content:   conf.Content,
+		CreatedAt: conf.CreatedAt.String(),
+		UpdatedAt: conf.UpdatedAt.String(),
+	}
+
+	return protoConf, nil
 }
 
-func (s *server) ListAllConfig(configItem *blodBank.NoParam, stream grpc.ServerStreamingServer[blodBank.ConfigItem]) error {
+func (s *server) ListAllConfig(noParam *blodBank.NoParam, stream grpc.ServerStreamingServer[blodBank.ConfigItem]) error {
 	log.Println("streaming list of all the configs")
-	query := "SELECT * FROM configs;"
 
-	row, err := s.db.Query(query)
-	if err != nil {
-		return status.Error(codes.Aborted, "bad request")
-	}
-	defer row.Close()
+	var configs []models.Configs
+	s.db.Find(&configs)
 
-	for row.Next() {
-		var id int
-		var name, content string
-		var createdAt, updatedAt string
-
-		row.Scan(&id, &name, &content, &createdAt, &updatedAt)
-
+	for _, i := range configs {
 		item := &blodBank.ConfigItem{
-			Id:        int64(id),
-			Name:      name,
-			Content:   content,
-			CreatedAt: createdAt,
-			UpdatedAt: updatedAt,
+			Id:        i.ID,
+			Name:      i.Name,
+			Content:   i.Content,
+			CreatedAt: i.CreatedAt.String(),
+			UpdatedAt: i.UpdatedAt.String(),
 		}
-
 		if err := stream.Send(item); err != nil {
 			return status.Error(codes.Aborted, "bad request")
 		}
 	}
-
 	return nil
 }
 
 func (s *server) DeleteConfig(ctx context.Context, configID *blodBank.ConfigID) (*blodBank.Status, error) {
-	query := "DELETE FROM configs WHERE id = $1;"
-	_, err := s.db.Exec(query, configID.Id)
-	if err != nil {
+	var conf models.Configs
+	if err := s.db.First(&conf, configID.Id).Error; err != nil {
+		return &blodBank.Status{Status: ""}, status.Error(codes.Internal, "could not find config")
+	}
+	if err := s.db.Delete(&conf).Error; err != nil {
 		return &blodBank.Status{Status: ""}, status.Error(codes.Internal, "failed to delete config")
 	}
 
@@ -107,10 +95,14 @@ func (s *server) DeleteConfig(ctx context.Context, configID *blodBank.ConfigID) 
 }
 
 func (s *server) UpdateConfig(ctx context.Context, configItem *blodBank.ConfigItem) (*blodBank.Status, error) {
-	query := "UPDATE configs SET name = $2, content = $3, updated_at = $4 WHERE id = $1"
+	var conf models.Configs
+	if err := s.db.First(&conf, configItem.Id).Error; err != nil {
+		return &blodBank.Status{Status: ""}, status.Error(codes.Internal, "could not find config")
+	}
+	conf.Name = configItem.Name
+	conf.Content = configItem.Content
 
-	_, err := s.db.Exec(query, configItem.Id, configItem.Name, configItem.Content, time.Now())
-	if err != nil {
+	if err := s.db.Save(&conf).Error; err != nil {
 		return &blodBank.Status{Status: ""}, status.Error(codes.Internal, "failed to update config")
 	}
 
@@ -119,18 +111,15 @@ func (s *server) UpdateConfig(ctx context.Context, configItem *blodBank.ConfigIt
 	return &blodBank.Status{Status: fmt.Sprintf("updated config with id %d", configItem.Id)}, nil
 }
 
-func newServer(db *sql.DB) *server {
+func newServer(db *gorm.DB) *server {
 	return &server{db: db}
 }
 
 func main() {
 	flag.Parse()
-	db, err := sql.Open("postgres", *dbURL)
+	db, err := models.Init()
 	if err != nil {
 		log.Fatalf("failed to connect to db: %v", err)
-	}
-	if err := db.Ping(); err != nil {
-		log.Fatalf("unable to reach db: %v", err)
 	}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
