@@ -9,7 +9,9 @@ Currently supports fetching and listing stored YAML-like config files.
 blod-bank
 │
 ├── server
-│   └── main.go
+│   ├── main.go
+│   └── models
+│       └── models.go
 ├── client
 │   ├── helper
 │   │   └── helper.go
