@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/dracuxan/blod-bank/client/helper"
@@ -20,4 +21,9 @@ func DeleteCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
 	}
 	fmt.Println("deleting config with id:", *delID)
 	helper.DeleteConfig(ctx, &blodBank.ConfigID{Id: *delID}, c)
+	status, err := helper.DeleteConfig(ctx, &blodBank.ConfigID{Id: *delID}, c)
+	if err != nil {
+		log.Fatalf("Cannot delete config: %v", err)
+	}
+	fmt.Println(status)
 }

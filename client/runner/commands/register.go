@@ -31,18 +31,25 @@ func RegisterCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
 			Name:    *regName,
 			Content: *regContent,
 		}
-		helper.RegisterConfig(ctx, &newConf, c)
+		status, err := helper.RegisterConfig(ctx, &newConf, c)
+		if err != nil {
+			log.Fatalf("Cannot register config: %v", err)
+		}
+		fmt.Println(status)
 	} else if *regFile != "" {
 		content, err := os.ReadFile(*regFile)
 		if err != nil {
 			log.Fatalf("failed to read file: %v", err)
 		}
-
 		newConf := blodBank.ConfigItem{
 			Name:    *regName,
 			Content: string(content),
 		}
-		helper.RegisterConfig(ctx, &newConf, c)
+		status, err := helper.RegisterConfig(ctx, &newConf, c)
+		if err != nil {
+			log.Fatalf("Cannot register config: %v", err)
+		}
+		fmt.Println(status)
 	} else {
 		fmt.Println("Need --content or --file!!")
 		os.Exit(1)

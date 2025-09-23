@@ -34,21 +34,26 @@ func UpdateCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
 			Name:    *updName,
 			Content: *updContent,
 		}
-		helper.UpdateConfig(ctx, &newConf, c)
-
+		status, err := helper.UpdateConfig(ctx, &newConf, c)
+		if err != nil {
+			log.Fatalf("Cannot update config: %v", err)
+		}
+		fmt.Println(status)
 	} else if *updFile != "" {
 		content, err := os.ReadFile(*updFile)
 		if err != nil {
 			log.Fatalf("failed to read file: %v", err)
 		}
-
 		newConf := blodBank.ConfigItem{
 			Id:      *updID,
 			Name:    *updName,
 			Content: string(content),
 		}
-		helper.RegisterConfig(ctx, &newConf, c)
-
+		status, err := helper.UpdateConfig(ctx, &newConf, c)
+		if err != nil {
+			log.Fatalf("Cannot update config: %v", err)
+		}
+		fmt.Println(status)
 	} else {
 		fmt.Println("Need --content or --file!!")
 		os.Exit(1)

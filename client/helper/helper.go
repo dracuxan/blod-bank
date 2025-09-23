@@ -2,28 +2,24 @@ package helper
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 
 	blodBank "github.com/dracuxan/blod-bank/proto"
 )
 
-func GetConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) {
+func GetConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) (*blodBank.ConfigItem, error) {
 	resp, err := c.GetConfig(ctx, id)
 	if err != nil {
-		log.Fatalf("Cannot get config: %v", err)
+		return nil, err
 	}
-	orgConf, err := json.MarshalIndent(resp, "", " ")
-	if err != nil {
-		log.Fatalf("cannot marshal response: %v", err)
-	}
-	fmt.Println(string(orgConf))
+	return resp, nil
 }
 
-func ListAllConfig(ctx context.Context, c blodBank.BlodBankServiceClient) {
+func ListAllConfig(ctx context.Context, c blodBank.BlodBankServiceClient) ([]*blodBank.ConfigItem, error) {
 	stream, err := c.ListAllConfig(ctx, &blodBank.NoParam{})
+	var configs []*blodBank.ConfigItem
+
 	if err != nil {
 		log.Fatalf("Cannot get config list: %v", err)
 	}
@@ -35,35 +31,33 @@ func ListAllConfig(ctx context.Context, c blodBank.BlodBankServiceClient) {
 		}
 		if err != nil {
 			log.Fatalf("client.ListConfigs failed: %v", err)
+			return nil, err
 		}
-		orgConf, err := json.MarshalIndent(config, "", " ")
-		if err != nil {
-			log.Fatalf("cannot marshal response: %v", err)
-		}
-		fmt.Println(string(orgConf))
+		configs = append(configs, config)
 	}
+	return configs, nil
 }
 
-func RegisterConfig(ctx context.Context, item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient) {
+func RegisterConfig(ctx context.Context, item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient) (string, error) {
 	status, err := c.RegisterConfig(ctx, item)
 	if err != nil {
-		log.Fatalf("Cannot register config: %v", err)
+		return "", err
 	}
-	fmt.Println(status.Status)
+	return status.Status, nil
 }
 
-func DeleteConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) {
+func DeleteConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) (string, error) {
 	status, err := c.DeleteConfig(ctx, id)
 	if err != nil {
-		log.Fatalf("Cannot delete config: %v", err)
+		return "", err
 	}
-	fmt.Println(status.Status)
+	return status.Status, nil
 }
 
-func UpdateConfig(ctx context.Context, item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient) {
+func UpdateConfig(ctx context.Context, item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient) (string, error) {
 	status, err := c.UpdateConfig(ctx, item)
 	if err != nil {
-		log.Fatalf("Cannot update config: %v", err)
+		return "", err
 	}
-	fmt.Println(status.Status)
+	return status.Status, nil
 }
