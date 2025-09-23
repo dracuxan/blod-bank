@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 )
 
-func UpdateCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
+func UpdateCommand(c blodBank.BlodBankServiceClient) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	updCmd := flag.NewFlagSet("register", flag.ExitOnError)
 	updID := updCmd.Int64("id", 0, "id of the config")
 

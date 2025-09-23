@@ -6,13 +6,16 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 	"gopkg.in/yaml.v3"
 )
 
-func GetCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
+func GetCommand(c blodBank.BlodBankServiceClient) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
 	getID := getCmd.Int64("id", 0, "Config ID to fetch")
 	getContentOnly := getCmd.Bool("c", false, "return/display only config content")

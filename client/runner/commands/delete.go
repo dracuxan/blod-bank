@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 )
 
-func DeleteCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
+func DeleteCommand(c blodBank.BlodBankServiceClient) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	delCmd := flag.NewFlagSet("delete", flag.ExitOnError)
 	delID := delCmd.Int64("id", 0, "id of config to delete")
 	delCmd.Parse(os.Args[2:])

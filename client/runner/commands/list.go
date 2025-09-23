@@ -4,13 +4,16 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 	"gopkg.in/yaml.v3"
 )
 
-func ListCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
+func ListCommand(c blodBank.BlodBankServiceClient) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	fmt.Println("Listing all configs:")
 
 	allConfigs, err := helper.ListAllConfig(ctx, c)

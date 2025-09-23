@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 )
 
-func RegisterCommand(ctx context.Context, c blodBank.BlodBankServiceClient) {
+func RegisterCommand(c blodBank.BlodBankServiceClient) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	registerCmd := flag.NewFlagSet("register", flag.ExitOnError)
 	regName := registerCmd.String("name", "", "name of config")
 	regContent := registerCmd.String("content", "", "content")

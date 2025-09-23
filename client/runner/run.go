@@ -1,10 +1,8 @@
 package runner
 
 import (
-	"context"
 	"fmt"
 	"os"
-	"time"
 
 	cmd "github.com/dracuxan/blod-bank/client/runner/commands"
 	blodBank "github.com/dracuxan/blod-bank/proto"
@@ -14,24 +12,23 @@ import (
 func Run(conn *grpc.ClientConn, option string) {
 	c := blodBank.NewBlodBankServiceClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	switch option {
 	case "get":
-		cmd.GetCommand(ctx, c)
+		cmd.GetCommand(c)
 
 	case "list":
-		cmd.ListCommand(ctx, c)
+		cmd.ListCommand(c)
 
 	case "register":
-		cmd.RegisterCommand(ctx, c)
+		cmd.RegisterCommand(c)
 
 	case "update":
-		cmd.UpdateCommand(ctx, c)
+		cmd.UpdateCommand(c)
 
 	case "delete":
-		cmd.DeleteCommand(ctx, c)
+		cmd.DeleteCommand(c)
+	case "server":
+		cmd.RpcServer(c)
 
 	default:
 		fmt.Println("unknown command")

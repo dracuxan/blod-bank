@@ -63,3 +63,4 @@ blod-bank
 - [x] Add database connection
 - [x] Replace in-memory storage with Postgress in server
 - [x] Replace raw queries with orm
+- [x] Add rpc server for other apps to access the server
