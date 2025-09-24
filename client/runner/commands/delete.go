@@ -23,7 +23,6 @@ func DeleteCommand(c blodBank.BlodBankServiceClient) {
 		os.Exit(1)
 	}
 	fmt.Println("deleting config with id:", *delID)
-	helper.DeleteConfig(ctx, &blodBank.ConfigID{Id: *delID}, c)
 	status, err := helper.DeleteConfig(ctx, &blodBank.ConfigID{Id: *delID}, c)
 	if err != nil {
 		log.Fatalf("Cannot delete config: %v", err)

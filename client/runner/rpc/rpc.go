@@ -1,4 +1,4 @@
-package cmd
+package rpc
 
 import (
 	"context"
@@ -14,6 +14,14 @@ import (
 
 type Server struct {
 	c blodBank.BlodBankServiceClient
+}
+
+type Args struct {
+	ID int64
+}
+
+type Status struct {
+	status string
 }
 
 type Config struct {
@@ -42,6 +50,27 @@ func (s *Server) ListAll(_ struct{}, resp *[]Config) error {
 		})
 	}
 	*resp = results
+	return nil
+}
+
+func (s *Server) GetConfig(args *Args, resp *Config) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	conf, err := helper.GetConfig(ctx, &blodBank.ConfigID{Id: args.ID}, s.c)
+	if err != nil {
+		// log.Printf("Cannot get config: %v", err)
+		return err
+	}
+	var getConf Config
+	getConf = Config{
+		ID:        conf.Id,
+		Name:      conf.Name,
+		Content:   conf.Content,
+		CreatedAt: conf.CreatedAt,
+		UpdatedAt: conf.UpdatedAt,
+	}
+	*resp = getConf
 	return nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	cmd "github.com/dracuxan/blod-bank/client/runner/commands"
+	"github.com/dracuxan/blod-bank/client/runner/rpc"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 	"google.golang.org/grpc"
 )
@@ -28,7 +29,7 @@ func Run(conn *grpc.ClientConn, option string) {
 	case "delete":
 		cmd.DeleteCommand(c)
 	case "server":
-		cmd.RpcServer(c)
+		rpc.RpcServer(c)
 
 	default:
 		fmt.Println("unknown command")
