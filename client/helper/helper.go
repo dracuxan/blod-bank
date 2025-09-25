@@ -12,7 +12,9 @@ import (
 	blodBank "github.com/dracuxan/blod-bank/proto"
 )
 
-func GetConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) (*blodBank.ConfigItem, error) {
+func GetConfig(id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) (*blodBank.ConfigItem, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	resp, err := c.GetConfig(ctx, id)
 	if err != nil {
 		return nil, err
@@ -20,7 +22,9 @@ func GetConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankSe
 	return resp, nil
 }
 
-func ListAllConfig(ctx context.Context, c blodBank.BlodBankServiceClient) ([]*blodBank.ConfigItem, error) {
+func ListAllConfig(c blodBank.BlodBankServiceClient) ([]*blodBank.ConfigItem, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	stream, err := c.ListAllConfig(ctx, &blodBank.NoParam{})
 	var configs []*blodBank.ConfigItem
 
@@ -52,7 +56,9 @@ func RegisterConfig(item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient)
 	return status.Status, nil
 }
 
-func DeleteConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) (string, error) {
+func DeleteConfig(id *blodBank.ConfigID, c blodBank.BlodBankServiceClient) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	status, err := c.DeleteConfig(ctx, id)
 	if err != nil {
 		return "", err
@@ -60,7 +66,9 @@ func DeleteConfig(ctx context.Context, id *blodBank.ConfigID, c blodBank.BlodBan
 	return status.Status, nil
 }
 
-func UpdateConfig(ctx context.Context, item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient) (string, error) {
+func UpdateConfig(item *blodBank.ConfigItem, c blodBank.BlodBankServiceClient) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	status, err := c.UpdateConfig(ctx, item)
 	if err != nil {
 		return "", err
@@ -96,6 +104,7 @@ func CreateConfig(regName, filename string) (*blodBank.ConfigItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &blodBank.ConfigItem{
 		Name:    regName,
 		Content: string(content),

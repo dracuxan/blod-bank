@@ -1,20 +1,15 @@
 package cmd
 
 import (
-	"context"
 	"flag"
 	"fmt"
-	"log"
 	"os"
-	"time"
 
 	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
 )
 
 func UpdateCommand(c blodBank.BlodBankServiceClient) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 	updCmd := flag.NewFlagSet("register", flag.ExitOnError)
 	updID := updCmd.Int64("id", 0, "id of the config")
 
@@ -25,40 +20,36 @@ func UpdateCommand(c blodBank.BlodBankServiceClient) {
 	updCmd.Parse(os.Args[2:])
 
 	if *updName == "" {
-		fmt.Println("Need --id=<> --name=<> and (--content=<> or --file) flag!!")
-		os.Exit(1)
+		helper.CheckMissingFlag("--id")
 	}
 
 	fmt.Println("Adding new config...")
 
 	if *updContent != "" {
-		newConf := blodBank.ConfigItem{
+		newConf := &blodBank.ConfigItem{
 			Id:      *updID,
 			Name:    *updName,
 			Content: *updContent,
 		}
-		status, err := helper.UpdateConfig(ctx, &newConf, c)
-		if err != nil {
-			log.Fatalf("Cannot update config: %v", err)
-		}
+		status, err := helper.UpdateConfig(newConf, c)
+		helper.CheckCommonError(err, "Cannot update config")
+
 		fmt.Println(status)
 	} else if *updFile != "" {
 		content, err := os.ReadFile(*updFile)
-		if err != nil {
-			log.Fatalf("failed to read file: %v", err)
-		}
-		newConf := blodBank.ConfigItem{
+		helper.CheckCommonError(err, "failed to read file")
+
+		newConf := &blodBank.ConfigItem{
 			Id:      *updID,
 			Name:    *updName,
 			Content: string(content),
 		}
-		status, err := helper.UpdateConfig(ctx, &newConf, c)
-		if err != nil {
-			log.Fatalf("Cannot update config: %v", err)
-		}
+
+		status, err := helper.UpdateConfig(newConf, c)
+		helper.CheckCommonError(err, "Cannot update config")
+
 		fmt.Println(status)
 	} else {
-		fmt.Println("Need --content or --file!!")
-		os.Exit(1)
+		helper.CheckMissingFlag("--content or --file")
 	}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type config struct {
-	Id        int64
+	ID        int64
 	Name      string
 	Content   string
 	CreatedAt string

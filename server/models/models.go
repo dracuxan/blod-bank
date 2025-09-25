@@ -10,7 +10,7 @@ import (
 
 type Configs struct {
 	ID        int64     `gorm:"primaryKey"`
-	Name      string    `gorm:"not null"`
+	Name      string    `gorm:"not null,unique"`
 	Content   string    `gorm:"not null"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`

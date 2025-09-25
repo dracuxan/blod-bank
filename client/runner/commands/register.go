@@ -3,7 +3,6 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/dracuxan/blod-bank/client/helper"
@@ -20,56 +19,42 @@ func RegisterCommand(c blodBank.BlodBankServiceClient) {
 	registerCmd.Parse(os.Args[2:])
 
 	if *regName == "" {
-		fmt.Println("Need --name=<> flag!!")
-		os.Exit(1)
+		helper.CheckMissingFlag("--name")
 	}
 
 	fmt.Println("Adding new config...")
 
 	if *regContent != "" {
-		newConf := blodBank.ConfigItem{
+		newConf := &blodBank.ConfigItem{
 			Name:    *regName,
 			Content: *regContent,
 		}
 
-		status, err := helper.RegisterConfig(&newConf, c)
-		if err != nil {
-			log.Fatalf("Cannot register config: %v", err)
-		}
+		status, err := helper.RegisterConfig(newConf, c)
+		helper.CheckCommonError(err, "Cannot register config")
 
 		fmt.Println(status)
 	} else if *regFile != "" {
 		newConf, err := helper.CreateConfig(*regName, *regFile)
-		if err != nil {
-			log.Fatalf("failed to read file: %v", err)
-		}
+		helper.CheckCommonError(err, "failed to read file")
 
 		status, err := helper.RegisterConfig(newConf, c)
-		if err != nil {
-			log.Fatalf("Cannot register config: %v", err)
-		}
+		helper.CheckCommonError(err, "Cannot register config")
 
 		fmt.Println(status)
 	} else if *editor {
 		// use editor to create file (vim)
 		filename, err := helper.OpenEditor(*regName)
-		if err != nil {
-			log.Fatalf("Unable to edit/create file: %v", err)
-		}
+		helper.CheckCommonError(err, "Unable to edit/create file:")
 
 		newConf, err := helper.CreateConfig(*regName, filename)
-		if err != nil {
-			log.Fatalf("failed to read file: %v", err)
-		}
+		helper.CheckCommonError(err, "failed to read file")
 
 		status, err := helper.RegisterConfig(newConf, c)
-		if err != nil {
-			log.Fatalf("Cannot register config: %v", err)
-		}
+		helper.CheckCommonError(err, "Cannot register config")
 
 		fmt.Println(status)
 	} else {
-		fmt.Println("Need --content or --file!!")
-		os.Exit(1)
+		helper.CheckMissingFlag("--content or --file")
 	}
 }

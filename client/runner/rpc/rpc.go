@@ -1,12 +1,9 @@
 package rpc
 
 import (
-	"context"
 	"fmt"
-	"log"
 	"net"
 	"net/rpc"
-	"time"
 
 	"github.com/dracuxan/blod-bank/client/helper"
 	blodBank "github.com/dracuxan/blod-bank/proto"
@@ -33,9 +30,7 @@ type Config struct {
 }
 
 func (s *Server) ListAll(_ struct{}, resp *[]Config) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	allConfigs, err := helper.ListAllConfig(ctx, s.c)
+	allConfigs, err := helper.ListAllConfig(s.c)
 	if err != nil {
 		return err
 	}
@@ -54,12 +49,8 @@ func (s *Server) ListAll(_ struct{}, resp *[]Config) error {
 }
 
 func (s *Server) GetConfig(args *Args, resp *Config) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	conf, err := helper.GetConfig(ctx, &blodBank.ConfigID{Id: args.ID}, s.c)
+	conf, err := helper.GetConfig(&blodBank.ConfigID{Id: args.ID}, s.c)
 	if err != nil {
-		// log.Printf("Cannot get config: %v", err)
 		return err
 	}
 	var getConf Config
@@ -79,9 +70,7 @@ func RpcServer(c blodBank.BlodBankServiceClient) {
 	rpc.Register(newServer)
 
 	lis, err := net.Listen("tcp", ":9090")
-	if err != nil {
-		log.Println("Error listening:", err)
-	}
+	helper.CheckCommonError(err, "Error listening")
 	defer lis.Close()
 
 	fmt.Println("Server is listening on port 9090...")
